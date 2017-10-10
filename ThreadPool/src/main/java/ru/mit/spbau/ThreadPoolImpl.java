@@ -1,14 +1,11 @@
 package ru.mit.spbau;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
-
 import java.util.Collection;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 /**
  * Created by kate on 16.09.17.
@@ -19,92 +16,79 @@ public class ThreadPoolImpl implements ThreadPool {
     private final Collection<Thread> threads = new LinkedList<>();
     private final Queue<Task<?>> workQueue = new LinkedList<>();
 
-    public ThreadPoolImpl(@NotNull int size) {
-
-        Stream.iterate(0, x -> x + 1)
-                .limit(size)
-                .map(x -> new Thread(this::createTask))
+    public ThreadPoolImpl(int size) {
+        IntStream.range(0, size)
+                .mapToObj(idx -> new Worker())
+                .map(Thread::new)
                 .peek(Thread::start)
                 .forEach(threads::add);
     }
 
     @Override
-    @Nullable
-    public <R> LightFuture<R> add(@NotNull Supplier<R> supplier) {
-        return addTask(new Task<R>() {
-            @Override
-            public R getFromSupplier() {
-                return supplier.get();
-            }
-        });
+    public <R> LightFuture<R> add(Supplier<R> supplier) {
+        final Task<R> task = new Task<>(supplier);
+        return addTask(task);
     }
 
     public void shutdown() {
         threads.forEach(Thread::interrupt);
     }
 
-    @Nullable
-    private <R> LightFuture<R> addTask(@Nullable Task<R> task) {
+    private <R> LightFuture<R> addTask(Task<R> task) {
         synchronized (workQueue) {
-
             workQueue.add(task);
             workQueue.notify();
-
         }
         return task;
     }
 
-    private void createTask() {
-        Task<?> task;
-        while (!Thread.interrupted()) {
-            synchronized (workQueue) {
-
-                waitQueue();
-                task = workQueue.poll();
-
-            }
-            task.run();
+    private Task<?> getTask() throws InterruptedException {
+        synchronized (workQueue) {
+            waitQueue();
+            return workQueue.poll();
         }
     }
 
-    private void waitQueue() {
+    private void waitQueue() throws InterruptedException {
         while (workQueue.isEmpty()) {
+            workQueue.wait();
+        }
+    }
+
+    private class Worker implements Runnable {
+        @Override
+        public void run() {
             try {
-
-                workQueue.wait();
-
-            } catch (InterruptedException ex) {
+                while (!Thread.interrupted()) {
+                    final Task<?> currentTask = getTask(); // throw InterruptedException
+                    currentTask.runTask();
+                }
+            } catch (InterruptedException ignore) {
             }
         }
     }
 
-    @Nullable
-    private <R, U> Task<U> dependentTask(@NotNull Task<R> prev,
-                                         @NotNull Function<? super R, ? extends U> p) {
-        return new Task<U>() {
-            @Override
-            public U getFromSupplier() throws LightExecutionException {
-                return p.apply(prev.get());
-            }
-        };
-    }
-
-    private abstract class Task<R> implements LightFuture<R>, Runnable {
+    private class Task<R> implements LightFuture<R> {
         private R result;
         private LightExecutionException exception;
         private final Collection<Task<?>> dependents = new LinkedList<>();
+        private final Supplier<R> supplier;
+        private volatile boolean isReady;
 
-        public abstract R getFromSupplier() throws LightExecutionException;
-
-        @Override
-        public boolean isReady() {
-            return result != null || exception != null;
+        public Task(final Supplier<R> supplier) {
+            this.supplier = supplier;
         }
 
         @Override
-        @Nullable
-        public R get() throws LightExecutionException {
-            waitIsReady();
+        public boolean isReady() {
+            return isReady;
+        }
+
+        @Override
+        public R get() throws LightExecutionException, InterruptedException {
+            if (!isReady()) {
+                waitIsReady();
+            }
             if (exception != null) {
                 throw exception;
             }
@@ -112,47 +96,68 @@ public class ThreadPoolImpl implements ThreadPool {
         }
 
         @Override
-        @Nullable
-        public <U> LightFuture<U> thenApply(@NotNull Function<? super R, ? extends U> function) {
-            Task<U> task = dependentTask(this, function);
-
-            addTask(task);
-
-            return task;
-        }
-
-        @Override
-        public void run() {
-            try {
-                result = getFromSupplier();
-            } catch (Exception e) {
-                exception = new LightExecutionException(e);
-            }
-            clearDependents();
-        }
-
-        private synchronized <U> void addTask(@Nullable Task<U> task) {
+        public <U> LightFuture<U> thenApply(Function<? super R, ? extends U> function) {
+            final Task<U> task = createDependentTask(function);
             if (isReady()) {
                 addTask(task);
             } else {
-                dependents.add(task);
+                addDependantTask(task);
+            }
+            return task;
+        }
+
+        public void runTask() {
+            try {
+                setResult();
+            } catch (Exception ex) {
+                setException(new LightExecutionException(ex));
+            }
+            submitDependentsAndClear();
+        }
+
+        private <U> Task<U> createDependentTask(Function<? super R, ? extends U> function) {
+            return new Task<>(() -> {
+                try {
+                    return function.apply(get());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        }
+
+        private synchronized <U> void addDependantTask(Task<U> task) {
+            if (isReady()) {
+                addTask(task);
+            } else {
+                synchronized (dependents) {
+                    dependents.add(task);
+                }
             }
         }
 
-        private synchronized void clearDependents() {
-            dependents.forEach(ThreadPoolImpl.this::addTask);
-            dependents.clear();
+        private void submitDependentsAndClear() {
+            synchronized (dependents) {
+                dependents.forEach(ThreadPoolImpl.this::addTask);
+                dependents.clear();
+            }
+        }
+
+        private synchronized void waitIsReady() throws InterruptedException {
+            while (!isReady()) {
+                wait();
+            }
+        }
+
+        private synchronized void setResult() {
+            result = supplier.get();
+            isReady = true;
             notifyAll();
         }
 
-        private synchronized void waitIsReady() {
-            while (!isReady()) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
+        private synchronized void setException(final LightExecutionException exception) {
+            this.exception = exception;
+            isReady = true;
+            notifyAll();
         }
     }
 }

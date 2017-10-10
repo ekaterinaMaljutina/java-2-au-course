@@ -9,52 +9,52 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.stream.IntStream;
 
+import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.*;
 
 /**
  * Created by kate on 17.09.17.
  */
 
-
 public class TestThreadPoolImpl {
 
-    @Test(expected = Test.None.class)
-    public void testSimple() throws LightExecutionException, InterruptedException {
-        final int sleepTime = 100;
-        final int answer = 4950;
-        final int range = 100;
-        ThreadPoolImpl pool = new ThreadPoolImpl(2);
+    private static final int COUNT_THREADS = 10;
+    private static final int SLEEP_MS = 100;
+    private static final int RANGE = 100;
+    private static final int EXPECTED_RESULT = 4950;
 
-        final LightFuture<Integer> w1 = pool.add(new SumValueOfRange(range));
-        final LightFuture<Integer> w2 = pool.add(new SumValueOfRange(range));
+    @Test
+    public void testSimple() throws LightExecutionException, InterruptedException {
+        ThreadPoolImpl pool = new ThreadPoolImpl(COUNT_THREADS);
+
+        final LightFuture<Integer> w1 = pool.add(new SumValueOfRange(RANGE));
+        final LightFuture<Integer> w2 = pool.add(new SumValueOfRange(RANGE));
 
         try {
-            Thread.sleep(sleepTime);
+            Thread.sleep(SLEEP_MS);
         } catch (InterruptedException ignored) {
         }
 
         Integer a1 = w1.get();
         assertTrue(w1.isReady());
-        assertEquals(answer, a1.intValue());
+        assertEquals(EXPECTED_RESULT, a1.intValue());
 
         Integer a2 = w2.get();
         assertTrue(w2.isReady());
-        assertEquals(answer, a2.intValue());
+        assertEquals(EXPECTED_RESULT, a2.intValue());
     }
 
 
-    @Test(expected = Test.None.class)
+    @Test
     public void manyThreadsTest() {
-        final int poolSize = 25;
-        final int range = 100;
 
-        ThreadPoolImpl pool = new ThreadPoolImpl(poolSize);
+        ThreadPoolImpl pool = new ThreadPoolImpl(COUNT_THREADS);
         List<LightFuture<Integer>> futures = new ArrayList<>();
         List<Integer> results = new ArrayList<>();
 
-        IntStream.range(0, range)
+        IntStream.range(0, RANGE)
                 .forEach(i -> futures
-                        .add(pool.add(new SumValueOfRange(range))));
+                        .add(pool.add(new SumValueOfRange(RANGE))));
 
         futures.stream().map(f -> {
             Integer val = null;
@@ -65,16 +65,15 @@ public class TestThreadPoolImpl {
             return val;
         }).forEach(results::add);
 
-        IntStream.range(0, range).forEach(i -> assertEquals(4950, results.get(i).intValue()));
+        IntStream.range(0, RANGE).forEach(i -> assertEquals(EXPECTED_RESULT, results.get(i).intValue()));
     }
 
     @Test
     public void leastThreadCountThreadsInPoolTest() throws InterruptedException {
-        final int threads = 10;
         final boolean[] arrived = {false};
-        ThreadPool threadPool = new ThreadPoolImpl(threads);
-        CyclicBarrier barrier = new CyclicBarrier(threads, () -> arrived[0] = true);
-        IntStream.range(0, threads).forEach(i -> {
+        ThreadPool threadPool = new ThreadPoolImpl(COUNT_THREADS);
+        CyclicBarrier barrier = new CyclicBarrier(COUNT_THREADS, () -> arrived[0] = true);
+        IntStream.range(0, COUNT_THREADS).forEach(i -> {
             threadPool.add(() -> {
                 try {
                     return barrier.await();
@@ -84,18 +83,27 @@ public class TestThreadPoolImpl {
                 return 0;
             });
         });
-        Thread.sleep(100);
+        Thread.sleep(SLEEP_MS);
         assertTrue(arrived[0]);
         threadPool.shutdown();
+
+        threadPool.add(() -> {
+            try {
+                return barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                Thread.currentThread().interrupt();
+            }
+            return 0;
+        });
+        assertTrue(arrived[0]);
     }
 
     @Test
     public void mostThreadCountThreadsInPoolTest() throws InterruptedException {
-        final int threads = 10;
         final boolean[] arrived = {false};
-        ThreadPool threadPool = new ThreadPoolImpl(threads);
-        CyclicBarrier barrier = new CyclicBarrier(threads + 1, () -> arrived[0] = true);
-        IntStream.range(0, threads).forEach(i -> {
+        ThreadPool threadPool = new ThreadPoolImpl(COUNT_THREADS);
+        CyclicBarrier barrier = new CyclicBarrier(COUNT_THREADS + 1, () -> arrived[0] = true);
+        IntStream.range(0, COUNT_THREADS).forEach(i -> {
             threadPool.add(() -> {
                 try {
                     return barrier.await();
@@ -105,7 +113,7 @@ public class TestThreadPoolImpl {
                 return 0;
             });
         });
-        Thread.sleep(100);
+        Thread.sleep(SLEEP_MS);
         assertFalse(arrived[0]);
         threadPool.shutdown();
     }
