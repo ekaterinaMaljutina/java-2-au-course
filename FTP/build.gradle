@@ -1,0 +1,30 @@
+group 'ru.spbau.mit'
+version '1.0-SNAPSHOT'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+apply plugin: 'java'
+
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    // https://mvnrepository.com/artifact/org.jetbrains/annotations
+    compile group: 'org.jetbrains', name: 'annotations', version: '13.0'
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-io
+    compile group: 'org.apache.commons', name: 'commons-io', version: '1.3.2'
+
+
+}
