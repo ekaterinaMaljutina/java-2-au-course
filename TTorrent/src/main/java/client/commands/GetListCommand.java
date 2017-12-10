@@ -16,7 +16,7 @@ public class GetListCommand implements ICommand {
     }
 
     @Override
-    public void runCommand(@NotNull IState state, String[] args) {
+    public boolean runCommand(@NotNull IState state, String[] args) {
         try {
             server.getListFiles()
                     .forEach((id, fileInfo) ->
@@ -28,10 +28,17 @@ public class GetListCommand implements ICommand {
             LOGGER.error("not load list from server");
             LOGGER.error(e);
         }
+        return false;
     }
 
     @Override
     public String commandName() {
         return "List Request To Server";
+    }
+
+    @NotNull
+    @Override
+    public Integer getId() {
+        return Request.LIST_REQUEST;
     }
 }

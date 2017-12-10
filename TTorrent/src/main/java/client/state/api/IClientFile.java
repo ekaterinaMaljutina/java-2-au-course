@@ -2,7 +2,7 @@ package client.state.api;
 
 import java.util.Set;
 
-public interface IClientFiles {
+public interface IClientFile {
     int getId();
 
     long getSize();

@@ -1,27 +1,26 @@
-package client.api;
+package client.state.api;
 
-import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface IStateClient {
 
     @NotNull
-    List<Path> getAllFiles();
+    Set<Path> getAllFiles();
 
     @NotNull
-    Map<Path, IFileInfo> getAllFilesWithInfo();
+    Map<Path, IClientFile> getAllFilesWithInfo();
 
     @NotNull
-    List<Integer> getListIdFiles();
+    Set<Object> getListIdFiles();
 
     @NotNull
     Path getPathByFileId(int idFile);
 
     @Nullable
-    IFileInfo getFileInfoById(int idFile);
+    IClientFile getFileInfoById(int idFile);
 }

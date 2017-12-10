@@ -1,6 +1,7 @@
 package client.commands;
 
 import client.state.api.IState;
+import com.sun.org.apache.regexp.internal.RE;
 import common.files.FileInfoImpl;
 import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;
@@ -20,17 +21,17 @@ public class UploadCommand implements ICommand {
     }
 
     @Override
-    public void runCommand(@NotNull IState state, String[] args) {
+    public boolean runCommand(@NotNull IState state, String[] args) {
         // args : id_command file_name_for_download
 
         if (args.length < 2) {
             LOGGER.error(" upload without args : <2> file_name");
-            return;
+            return false;
         }
 
         IFileInfo fileInfo = getFileInfo(Paths.get(args[1]), state);
         if (fileInfo == null) {
-            return;
+            return false;
         }
 
         try {
@@ -46,6 +47,7 @@ public class UploadCommand implements ICommand {
             LOGGER.error(e);
         }
 
+        return false;
     }
 
     @Override
@@ -53,6 +55,11 @@ public class UploadCommand implements ICommand {
         return "Upload Request To Server";
     }
 
+    @NotNull
+    @Override
+    public Integer getId() {
+        return Request.UPLOAD_REQUEST;
+    }
 
     private static @Nullable
     IFileInfo getFileInfo(@NotNull Path pathToFile, @NotNull IState currentState) {

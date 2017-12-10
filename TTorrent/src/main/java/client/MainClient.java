@@ -1,5 +1,6 @@
 package client;
 
+import client.state.api.IState;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import org.apache.logging.log4j.LogManager;
@@ -13,8 +14,8 @@ public class MainClient {
 
     private static final Logger LOGGER = LogManager.getLogger(MainClient.class);
     private static final String DEFAULT_ADDRESS = "localhost";
-    private static final Integer DEFAULT_SERVER_PORT = 20006;
-    private static final Integer DEFAULT_CLIENT_PORT = 20007;
+    private static final Integer DEFAULT_SERVER_PORT = 8081;
+    private static final Integer DEFAULT_CLIENT_PORT = 8082;
 
 
     public static void main(String[] args) {
@@ -22,6 +23,16 @@ public class MainClient {
 
         try {
             InetAddress address = InetAddress.getByName(DEFAULT_ADDRESS);
+
+            // load last client state
+//            IState state = new
+
+
+//            MainLoopClient loopClient = new MainLoopClient(address, DEFAULT_SERVER_PORT);
+
+
+
+
         } catch (UnknownHostException e) {
             LOGGER.fatal(" unknow server address " + DEFAULT_ADDRESS);
             parser.printHelp();

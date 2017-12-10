@@ -10,7 +10,11 @@ public interface ICommand {
 
     Logger LOGGER = LogManager.getLogger(ICommand.class);
 
-    void runCommand(@NotNull IState state, String[] args);
+    // is last command (exit)
+    boolean runCommand(@NotNull IState state, String[] args);
 
     String commandName();
+
+    @NotNull
+    Integer getId();
 }
