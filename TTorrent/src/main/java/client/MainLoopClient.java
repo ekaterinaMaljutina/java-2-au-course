@@ -1,8 +1,8 @@
 package client;
 
-import common.commands.server.CommandSingFactory;
-import common.commands.server.IdRequestToServer;
-import common.commands.server.ICommand;
+import common.commands.io.CommandSingFactory;
+import common.commands.io.IdRequestToServer;
+import common.commands.io.ICommand;
 import client.state.api.IState;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,4 @@
-package common.commands.server;
+package common.commands.io;
 
 import client.state.api.IState;
 import common.files.FileInfoImpl;

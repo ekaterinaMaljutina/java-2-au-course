@@ -1,4 +1,4 @@
-package common.commands.server;
+package common.commands.io;
 
 
 import org.jetbrains.annotations.NotNull;

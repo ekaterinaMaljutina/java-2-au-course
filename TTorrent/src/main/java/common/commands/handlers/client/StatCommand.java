@@ -1,4 +1,4 @@
-package common.commands.client;
+package common.commands.handlers.client;
 
 import client.api.IClientFile;
 import client.state.api.IState;

@@ -1,16 +1,19 @@
-package common.commands.client;
+package common.commands.io;
 
 import client.state.api.IState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.net.Socket;
-
 public interface ICommand {
 
     Logger LOGGER = LogManager.getLogger(ICommand.class);
 
-    void runCommand(@NotNull Socket socket, @NotNull IState stateClient) throws IOException;
+    // is last command (exit)
+    boolean runCommand(@NotNull IState state, String[] args);
+
+    String commandName();
+
+    @NotNull
+    Integer getId();
 }

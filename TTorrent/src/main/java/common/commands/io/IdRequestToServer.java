@@ -1,4 +1,4 @@
-package common.commands.server;
+package common.commands.io;
 
 
 public class IdRequestToServer {

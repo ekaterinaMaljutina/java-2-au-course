@@ -1,26 +1,22 @@
-package common.commands.server;
+package common.commands.io;
 
 import client.state.api.IState;
 import org.jetbrains.annotations.NotNull;
 
-public class UnknownCommand implements ICommand {
-
+public class ExitCommand implements ICommand {
     @Override
     public boolean runCommand(@NotNull IState state, String[] args) {
-        if (args.length != 0) {
-            System.out.println(" unknown command id " + args[0]);
-        }
-        return false;
+        return true;
     }
 
     @Override
     public String commandName() {
-        return "";
+        return "Exit Command";
     }
 
     @NotNull
     @Override
     public Integer getId() {
-        return IdRequestToServer.UNKNOWN_REQUEST;
+        return IdRequestToServer.EXIT_REQUEST;
     }
 }
