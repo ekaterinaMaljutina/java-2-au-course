@@ -1,5 +1,6 @@
 package client.state.api;
 
+import client.api.IClientFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +19,7 @@ public interface IStateClient {
     @NotNull
     Set<Object> getListIdFiles();
 
-    @NotNull
+    @Nullable
     Path getPathByFileId(int idFile);
 
     @Nullable

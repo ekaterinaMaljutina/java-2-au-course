@@ -1,4 +1,4 @@
-package client.commands;
+package common.commands.server;
 
 import client.state.api.IState;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +21,8 @@ public class GetListCommand implements ICommand {
             server.getListFiles()
                     .forEach((id, fileInfo) ->
                             System.out.println(String.format(
-                            "id = %d; name = %s; size = %d",
-                            id, fileInfo.getName(), fileInfo.getSize())));
+                                    "id = %d; name = %s; size = %d",
+                                    id, fileInfo.getName(), fileInfo.getSize())));
 
         } catch (IOException e) {
             LOGGER.error("not load list from server");
@@ -33,12 +33,12 @@ public class GetListCommand implements ICommand {
 
     @Override
     public String commandName() {
-        return "List Request To Server";
+        return "List IdRequestToServer To Server";
     }
 
     @NotNull
     @Override
     public Integer getId() {
-        return Request.LIST_REQUEST;
+        return IdRequestToServer.LIST_REQUEST;
     }
 }

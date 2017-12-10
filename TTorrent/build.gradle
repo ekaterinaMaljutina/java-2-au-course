@@ -16,6 +16,7 @@ dependencies {
     // https://mvnrepository.com/artifact/net.sourceforge.argparse4j/argparse4j
     compile group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.2.0'
 
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.6.2'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
 

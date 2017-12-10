@@ -1,4 +1,4 @@
-package client.state.api;
+package client.api;
 
 import java.util.Set;
 
@@ -8,6 +8,8 @@ public interface IClientFile {
     long getSize();
 
     boolean isDownloaded();
+
+    boolean addPartOfFile(int idPart);
 
     Set<Integer> getParts();
 }

@@ -1,4 +1,4 @@
-package client.commands;
+package common.commands.server;
 
 
 import client.api.IClientInfo;

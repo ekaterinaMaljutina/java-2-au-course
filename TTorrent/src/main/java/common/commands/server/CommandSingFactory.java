@@ -1,4 +1,5 @@
-package client.commands;
+package common.commands.server;
+
 
 import org.jetbrains.annotations.NotNull;
 
@@ -18,9 +19,9 @@ public class CommandSingFactory {
     }
 
     private static void initMapCommand(@NotNull InetAddress address, int port) {
-        idxCommandToImplCommand.put(Request.LIST_REQUEST, new GetListCommand(address, port));
-        idxCommandToImplCommand.put(Request.EXIT_REQUEST, new ExitCommand());
-        idxCommandToImplCommand.put(Request.UNKNOWN_REQUEST, new UnknownCommand());
-        idxCommandToImplCommand.put(Request.UPLOAD_REQUEST, new UploadCommand(address, port));
+        idxCommandToImplCommand.put(IdRequestToServer.LIST_REQUEST, new GetListCommand(address, port));
+        idxCommandToImplCommand.put(IdRequestToServer.EXIT_REQUEST, new ExitCommand());
+        idxCommandToImplCommand.put(IdRequestToServer.UNKNOWN_REQUEST, new UnknownCommand());
+        idxCommandToImplCommand.put(IdRequestToServer.UPLOAD_REQUEST, new UploadCommand(address, port));
     }
 }

@@ -1,7 +1,6 @@
-package client.commands;
+package common.commands.server;
 
 import client.state.api.IState;
-import com.sun.org.apache.regexp.internal.RE;
 import common.files.FileInfoImpl;
 import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +17,16 @@ public class UploadCommand implements ICommand {
 
     public UploadCommand(@NotNull InetAddress addressServer, int port) {
         server = new RequestToServer(addressServer, port);
+    }
+
+    private static @Nullable
+    IFileInfo getFileInfo(@NotNull Path pathToFile, @NotNull IState currentState) {
+        if (currentState.getAllFilesWithInfo().containsKey(pathToFile) || !pathToFile.toFile().exists()) {
+            LOGGER.error(String.format("file_name = %s : file already exist or file not found", pathToFile.toString()));
+            return null;
+        }
+
+        return new FileInfoImpl(pathToFile.toFile().getName(), pathToFile.toFile().length());
     }
 
     @Override
@@ -52,22 +61,12 @@ public class UploadCommand implements ICommand {
 
     @Override
     public String commandName() {
-        return "Upload Request To Server";
+        return "Upload IdRequestToServer To Server";
     }
 
     @NotNull
     @Override
     public Integer getId() {
-        return Request.UPLOAD_REQUEST;
-    }
-
-    private static @Nullable
-    IFileInfo getFileInfo(@NotNull Path pathToFile, @NotNull IState currentState) {
-        if (currentState.getAllFilesWithInfo().containsKey(pathToFile) || !pathToFile.toFile().exists()) {
-            LOGGER.error(String.format("file_name = %s : file already exist or file not found", pathToFile.toString()));
-            return null;
-        }
-
-        return new FileInfoImpl(pathToFile.toFile().getName(), pathToFile.toFile().length());
+        return IdRequestToServer.UPLOAD_REQUEST;
     }
 }

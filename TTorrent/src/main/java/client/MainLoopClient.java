@@ -1,8 +1,8 @@
 package client;
 
-import client.commands.CommandSingFactory;
-import client.commands.ICommand;
-import client.commands.Request;
+import common.commands.server.CommandSingFactory;
+import common.commands.server.IdRequestToServer;
+import common.commands.server.ICommand;
 import client.state.api.IState;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ public class MainLoopClient implements Runnable {
         this.stateClient = stateClient;
         idCommandToImplCommand =
                 CommandSingFactory.getInstanceCommand(addressServer, portServer);
-        defaultCommand = idCommandToImplCommand.get(Request.UNKNOWN_REQUEST);
+        defaultCommand = idCommandToImplCommand.get(IdRequestToServer.UNKNOWN_REQUEST);
     }
 
     @Override

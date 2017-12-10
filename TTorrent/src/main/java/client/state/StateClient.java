@@ -1,6 +1,6 @@
 package client.state;
 
-import client.state.api.IClientFile;
+import client.api.IClientFile;
 import client.state.api.IState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,7 +63,7 @@ public class StateClient implements IState, Serializable {
         return Collections.unmodifiableSet(idxFileToPath.keySet());
     }
 
-    @NotNull
+    @Nullable
     @Override
     public Path getPathByFileId(int idFile) {
         return idxFileToPath.get(idFile);

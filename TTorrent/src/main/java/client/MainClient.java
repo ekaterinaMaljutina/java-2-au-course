@@ -1,5 +1,7 @@
 package client;
 
+import client.api.IClientLogic;
+import client.state.StateClient;
 import client.state.api.IState;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -9,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collections;
 
 public class MainClient {
 
@@ -24,13 +27,18 @@ public class MainClient {
         try {
             InetAddress address = InetAddress.getByName(DEFAULT_ADDRESS);
 
+
             // load last client state
-//            IState state = new
+            // Here load old state client
+            IState state = new StateClient(Collections.emptyMap());
 
+            IClientLogic client =
+                    new ClientLogicImpl(DEFAULT_CLIENT_PORT, state);
 
-//            MainLoopClient loopClient = new MainLoopClient(address, DEFAULT_SERVER_PORT);
+            MainLoopClient loopClient = new MainLoopClient(state,
+                    address, DEFAULT_SERVER_PORT);
 
-
+            loopClient.run();
 
 
         } catch (UnknownHostException e) {

@@ -1,5 +1,6 @@
 package client.state.api;
 
+import client.api.IClientFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
