@@ -9,7 +9,7 @@ public class SimpleClientInfo implements ClientInfo {
     private final int port;
 
     public SimpleClientInfo(byte b1, byte b2, byte b3, byte b4, int port) {
-        ipAddress = new byte[] {b1, b2, b3, b4};
+        ipAddress = new byte[]{b1, b2, b3, b4};
         this.port = port;
     }
 

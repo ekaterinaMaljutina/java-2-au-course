@@ -2,7 +2,7 @@ package common.commands.request;
 
 import java.io.Serializable;
 
-public class UploadRequest implements Serializable{
+public class UploadRequest implements Serializable {
 
     private final String nameFile;
     private final long size;

@@ -1,9 +1,9 @@
 package client;
 
-import common.commands.io.CommandSingFactory;
-import common.commands.io.IdRequestToServer;
-import common.commands.io.ICommand;
 import client.state.api.IState;
+import common.commands.io.CommandSingFactory;
+import common.commands.io.ICommand;
+import common.commands.io.IdRequestToServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;

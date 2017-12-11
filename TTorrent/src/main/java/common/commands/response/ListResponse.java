@@ -1,6 +1,5 @@
 package common.commands.response;
 
-import common.commands.handlers.server.ListCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -15,6 +14,13 @@ public class ListResponse implements Serializable {
 
     public List<ItemFile> getListFiles() {
         return listFiles;
+    }
+
+    @Override
+    public String toString() {
+        return "ListResponse{" +
+                "listFiles=" + listFiles +
+                '}';
     }
 
     public static class ItemFile {
@@ -48,13 +54,5 @@ public class ListResponse implements Serializable {
                     ", size=" + size +
                     "};";
         }
-    }
-
-
-    @Override
-    public String toString() {
-        return "ListResponse{" +
-                "listFiles=" + listFiles +
-                '}';
     }
 }

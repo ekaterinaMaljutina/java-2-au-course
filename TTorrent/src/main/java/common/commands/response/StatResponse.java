@@ -1,7 +1,5 @@
 package common.commands.response;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 public class StatResponse {

@@ -16,7 +16,7 @@ public interface ClientCommand {
                      @NotNull IState state) {
         try {
             runCommand(socket, state);
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             LOGGER.error(" fail run command");
         }
     }

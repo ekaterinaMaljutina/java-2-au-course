@@ -7,5 +7,6 @@ import java.nio.file.Path;
 
 public interface IState extends IStateClient {
     boolean partOfFile(@NotNull Path file, int numberOfPart);
+
     boolean newFile(@NotNull Path file, IClientFile fileInfo);
 }

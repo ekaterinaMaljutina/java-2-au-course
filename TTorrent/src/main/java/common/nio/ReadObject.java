@@ -8,7 +8,7 @@ import java.net.Socket;
 
 public class ReadObject {
 
-    public static  <T> T readQuery(@NotNull Socket socket)
+    public static <T> T readQuery(@NotNull Socket socket)
             throws IOException, ClassNotFoundException {
         try (
                 ObjectInputStream inputStream = new ObjectInputStream(socket

@@ -15,6 +15,13 @@ public class SourcesResponse implements Serializable {
         return clientSourceList;
     }
 
+    @Override
+    public String toString() {
+        return "SourcesResponse{" +
+                "clientSourceList=" + clientSourceList +
+                '}';
+    }
+
     public static class ClientSource {
         private final byte[] api;
         private final int port;
@@ -40,12 +47,5 @@ public class SourcesResponse implements Serializable {
                     ", port=" + port +
                     "};";
         }
-    }
-
-    @Override
-    public String toString() {
-        return "SourcesResponse{" +
-                "clientSourceList=" + clientSourceList +
-                '}';
     }
 }
