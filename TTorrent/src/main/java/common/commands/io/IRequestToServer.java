@@ -1,7 +1,7 @@
 package common.commands.io;
 
 
-import client.api.IClientInfo;
+import client.api.ClientInfo;
 import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ public interface IRequestToServer {
 
     int upload(@NotNull IFileInfo fileInfo) throws IOException;
 
-    List<IClientInfo> sources(int idFile) throws IOException;
+    List<ClientInfo> sources(int idFile) throws IOException;
 
     boolean update(int port, int[] idFiles) throws IOException;
 

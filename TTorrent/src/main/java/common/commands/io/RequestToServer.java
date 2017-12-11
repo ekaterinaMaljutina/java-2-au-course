@@ -1,6 +1,6 @@
 package common.commands.io;
 
-import client.api.IClientInfo;
+import client.api.ClientInfo;
 import common.files.IFileInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +37,7 @@ public class RequestToServer implements IRequestToServer {
     }
 
     @Override
-    public List<IClientInfo> sources(int idFile) throws IOException {
+    public List<ClientInfo> sources(int idFile) throws IOException {
         LOGGER.info("send to sources request");
         return null;
     }

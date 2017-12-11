@@ -1,11 +1,12 @@
 package server.state;
 
-import client.api.IClientInfo;
+import client.api.ClientInfo;
 import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Time;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,9 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class StateServer implements IStateServer {
 
 
-    private final Map<IClientInfo, Set<Integer>> clientToListFiles = new ConcurrentHashMap<>();
+    private final Map<ClientInfo, Set<Integer>> clientToListFiles = new ConcurrentHashMap<>();
 
-    private final Map<IClientInfo, Time> lastUpdateClient = new ConcurrentHashMap<>();
+    private final Map<ClientInfo, Time> lastUpdateClient = new ConcurrentHashMap<>();
 
     @Override
     public int newFile(@NotNull IFileInfo fileInfo) {
@@ -23,18 +24,18 @@ public class StateServer implements IStateServer {
     }
 
     @Override
-    public void setFileOnClient(@NotNull IClientInfo client, Set<Integer> idFiles) {
+    public void setFileOnClient(@NotNull ClientInfo client, Set<Integer> idFiles) {
         clientToListFiles.put(client, idFiles);
     }
 
     @Override
     @Nullable
-    public Time lastConnectionToClient(@NotNull IClientInfo clientInfo) {
+    public Time lastConnectionToClient(@NotNull ClientInfo clientInfo) {
         return lastUpdateClient.getOrDefault(clientInfo, null);
     }
 
     @Override
-    public void changedLastUpdateFile(@NotNull IClientInfo clientInfo, @NotNull Time time) {
+    public void changedLastUpdateFile(@NotNull ClientInfo clientInfo, @NotNull Time time) {
         lastUpdateClient.put(clientInfo, time);
     }
 
@@ -44,18 +45,23 @@ public class StateServer implements IStateServer {
     }
 
     @Override
-    public void removeClient(@NotNull IClientInfo clientInfo) {
+    public void removeClient(@NotNull ClientInfo clientInfo) {
         lastUpdateClient.remove(clientInfo);
         clientToListFiles.remove(clientInfo);
     }
 
     @Override
-    public Set<Integer> getIdFilesOnClients(@NotNull IClientInfo clientInfo) {
+    public Set<Integer> getIdFilesOnClients(@NotNull ClientInfo clientInfo) {
         return clientToListFiles.get(clientInfo);
     }
 
     @Override
-    public Set<IClientInfo> getClients() {
+    public Set<ClientInfo> getClients() {
         return clientToListFiles.keySet(); // unmodif ???
+    }
+
+    @Override
+    public void updateSharedFiles(ClientInfo clientInfo, List<Integer> idFiles) {
+
     }
 }
