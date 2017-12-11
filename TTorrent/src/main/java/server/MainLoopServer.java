@@ -1,11 +1,11 @@
 package server;
 
 import client.MainLoopClient;
-import common.commands.handlers.server.IServerCommand;
-import common.commands.handlers.server.IdRequestToServer;
+import common.commands.handlers.server.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import server.api.IServerLogic;
 import server.state.IStateServer;
 
@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,6 +22,7 @@ public class MainLoopServer implements IServerLogic {
 
     private static final Logger LOGGER = LogManager.getLogger(MainLoopClient.class);
     private static final int countThread = 4;
+    private static final Map<Integer, IServerCommand> idToCommand = new HashMap<>();
 
 
     private final int portServer;
@@ -61,16 +64,19 @@ public class MainLoopServer implements IServerLogic {
     }
 
 
+    @Nullable
     private IServerCommand findCommand(int id) {
-        switch (id) {
-            case IdRequestToServer.REQUEST_LIST:
-            case IdRequestToServer.REQUEST_SOURCES:
-            case IdRequestToServer.REQUEST_UPDATE:
-            case IdRequestToServer.REQUEST_UPLOAD:
-            default:
-                LOGGER.warn("unknown command id " + id);
-                return null;
+        if (idToCommand.containsKey(id)) {
+            return idToCommand.get(id);
         }
+        return null;
+    }
+
+    private void intiMapCommand() {
+        idToCommand.put(IdRequestToServer.REQUEST_LIST, new ListCommand());
+        idToCommand.put(IdRequestToServer.REQUEST_SOURCES, new SourcesCommand());
+        idToCommand.put(IdRequestToServer.REQUEST_UPDATE, new UpdateCommand());
+        idToCommand.put(IdRequestToServer.REQUEST_UPLOAD, new UploadCommand());
     }
 
     @Override

@@ -2,40 +2,28 @@ package common.commands.handlers.client;
 
 import client.api.IClientFile;
 import client.state.api.IState;
+import common.commands.request.StatRequest;
+import common.commands.response.StatResponse;
+import common.nio.ReadObject;
+import common.nio.WriteObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Set;
 
-public class StatCommand implements ICommand {
+public class StatCommand implements ClientCommand {
 
     @Override
     public void runCommand(@NotNull Socket socket,
-                           @NotNull IState stateClient) throws IOException {
-        // ??? response serialization ????
+                           @NotNull IState stateClient) throws IOException, ClassNotFoundException {
 
-        try (DataInputStream inputStream =
-                     new DataInputStream(socket.getInputStream())) {
-            int idFile = inputStream.readInt();
-
-            LOGGER.info("get command STAT id=" + idFile);
-            IClientFile fileInfo = stateClient.getFileInfoById(idFile);
-            if (fileInfo == null) {
-                LOGGER.warn(String.format("file by id %d not found", idFile));
-                return;
-            }
-            try (DataOutputStream out =
-                         new DataOutputStream(socket.getOutputStream())) {
-                final Set<Integer> parts = fileInfo.getParts();
-                out.writeInt(parts.size());
-                for (Integer part : parts) {
-                    out.writeInt(part);
-                }
-            }
+        StatRequest request = ReadObject.readQuery(socket);
+        IClientFile fileInfo = stateClient.getFileInfoById(request.getIdFile());
+        if (fileInfo == null) {
+            LOGGER.warn(String.format("file by id %d not found", request.getIdFile()));
+            return;
         }
-
+        StatResponse response = new StatResponse(fileInfo.getParts());
+        WriteObject.writeMessage(socket, response);
     }
 }
