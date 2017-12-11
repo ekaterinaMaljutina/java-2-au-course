@@ -18,6 +18,7 @@ public class StatCommand implements ClientCommand {
                            @NotNull IState stateClient) throws IOException, ClassNotFoundException {
 
         StatRequest request = ReadObject.readQuery(socket);
+        LOGGER.info(String.format("get command %s ", request));
         IClientFile fileInfo = stateClient.getFileInfoById(request.getIdFile());
         if (fileInfo == null) {
             LOGGER.warn(String.format("file by id %d not found", request.getIdFile()));

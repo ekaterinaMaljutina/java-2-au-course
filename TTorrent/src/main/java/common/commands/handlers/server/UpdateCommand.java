@@ -19,6 +19,7 @@ public class UpdateCommand implements IServerCommand {
     public void runCommand(@NotNull Socket socket,
                            @NotNull IStateServer stateServer) throws IOException, ClassNotFoundException {
         UpdateRequest request = ReadObject.readQuery(socket);
+        LOGGER.info(String.format("get command %s ", request));
         byte[] ip = socket.getInetAddress().getAddress();
         ClientInfo clientInfo = new SimpleClientInfo(ip[0], ip[1], ip[2], ip[3],
                 request.getPort());

@@ -16,6 +16,7 @@ public class ListCommand implements IServerCommand {
     public void runCommand(@NotNull Socket socket,
                            @NotNull IStateServer stateServer) throws IOException {
         List<ListResponse.ItemFile> fileList = new LinkedList<>();
+        LOGGER.info("get command list ");
         stateServer.getAllFiles().forEach(
                 (id, fileInfo) -> {
                     fileList

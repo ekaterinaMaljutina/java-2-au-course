@@ -1,6 +1,7 @@
 package common.commands.response;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 public class SourcesResponse implements Serializable {
@@ -15,16 +16,16 @@ public class SourcesResponse implements Serializable {
     }
 
     public static class ClientSource {
-        private final String api;
+        private final byte[] api;
         private final int port;
 
-        public ClientSource(String api, int port) {
+        public ClientSource(byte[] api, int port) {
             this.api = api;
             this.port = port;
 
         }
 
-        public String getApi() {
+        public byte[] getApi() {
             return api;
         }
 
@@ -35,7 +36,7 @@ public class SourcesResponse implements Serializable {
         @Override
         public String toString() {
             return "{" +
-                    "api='" + api + '\'' +
+                    "api='" + Arrays.toString(api) + '\'' +
                     ", port=" + port +
                     "};";
         }

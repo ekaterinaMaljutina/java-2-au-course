@@ -17,6 +17,7 @@ public class SourcesCommand implements IServerCommand {
     public void runCommand(@NotNull Socket socket,
                            @NotNull IStateServer stateClient) throws IOException, ClassNotFoundException {
         SourcesRequest request = ReadObject.readQuery(socket);
+        LOGGER.info(String.format("get command %s ", request));
         List<SourcesResponse.ClientSource> clientInfoList = stateClient.getClients().stream()
                 .filter(clientInfo ->
                         stateClient.getIdFilesOnClients(clientInfo)
@@ -27,6 +28,5 @@ public class SourcesCommand implements IServerCommand {
                 .collect(Collectors.toList());
         SourcesResponse response = new SourcesResponse(clientInfoList);
         WriteObject.writeMessage(socket, response);
-
     }
 }

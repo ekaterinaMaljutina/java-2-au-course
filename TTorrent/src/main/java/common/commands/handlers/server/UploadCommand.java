@@ -17,6 +17,7 @@ public class UploadCommand implements IServerCommand {
     public void runCommand(@NotNull Socket socket,
                            @NotNull IStateServer stateClient) throws IOException, ClassNotFoundException {
         UploadRequest request = ReadObject.readQuery(socket);
+        LOGGER.info(String.format("get command %s ", request));
         int idFile = stateClient.newFile(new FileInfoImpl(request.getNameFile(), request.getSize()));
         WriteObject.writeMessage(socket, new UploadResponse(idFile));
     }
