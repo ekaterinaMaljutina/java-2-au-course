@@ -1,7 +1,7 @@
 package common.commands.handlers.server;
 
 import common.commands.response.ListResponse;
-import common.nio.WriteObject;
+import common.nio.QueryWriter;
 import org.jetbrains.annotations.NotNull;
 import server.state.IStateServer;
 
@@ -24,6 +24,6 @@ public class ListCommand implements IServerCommand {
                                     fileInfo.getName(), fileInfo.getSize()));
                 });
         ListResponse response = new ListResponse(fileList);
-        WriteObject.writeMessage(socket, response);
+        QueryWriter.writeMessage(socket, response);
     }
 }

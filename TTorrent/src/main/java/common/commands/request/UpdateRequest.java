@@ -1,13 +1,13 @@
 package common.commands.request;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 public class UpdateRequest implements Serializable {
     private final int port;
-    private final List<Integer> idFiles;
+    private final Set<Integer> idFiles;
 
-    public UpdateRequest(int port, List<Integer> idFiles) {
+    public UpdateRequest(int port, Set<Integer> idFiles) {
         this.port = port;
         this.idFiles = idFiles;
     }
@@ -16,7 +16,7 @@ public class UpdateRequest implements Serializable {
         return port;
     }
 
-    public List<Integer> getIdFiles() {
+    public Set<Integer> getIdFiles() {
         return idFiles;
     }
 

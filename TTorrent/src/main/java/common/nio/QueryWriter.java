@@ -12,7 +12,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class WriteObject {
+public class QueryWriter {
 
     public static <T> void writeMessage(@NotNull Socket socket, T obj)
             throws IOException {

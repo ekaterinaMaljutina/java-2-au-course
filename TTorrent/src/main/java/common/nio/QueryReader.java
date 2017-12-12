@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
-public class ReadObject {
+public class QueryReader {
 
+    @SuppressWarnings("unchecked")
     public static <T> T readQuery(@NotNull Socket socket)
             throws IOException, ClassNotFoundException {
         try (

@@ -24,9 +24,8 @@ public class GetListCommand implements ICommand {
                                     "id = %d; name = %s; size = %d",
                                     id, fileInfo.getName(), fileInfo.getSize())));
 
-        } catch (IOException e) {
-            LOGGER.error("not load list from server");
-            LOGGER.error(e);
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.error("not load list from server; error " + e);
         }
         return false;
     }

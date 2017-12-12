@@ -3,8 +3,8 @@ package common.commands.handlers.client;
 import client.api.IClientFile;
 import client.state.api.IState;
 import common.commands.request.GetRequest;
-import common.nio.ReadObject;
-import common.nio.WriteObject;
+import common.nio.QueryReader;
+import common.nio.QueryWriter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class GetCommand implements ClientCommand {
     public void runCommand(@NotNull Socket socket,
                            @NotNull IState stateClient)
             throws IOException, ClassNotFoundException {
-        GetRequest request = ReadObject.readQuery(socket);
+        GetRequest request = QueryReader.readQuery(socket);
         LOGGER.info(String.format("get command %s ", request));
 
         Path pathToFile = stateClient.getPathByFileId(request.getIdFile());
@@ -31,7 +31,7 @@ public class GetCommand implements ClientCommand {
             return;
         }
 
-        WriteObject.writeContext(socket, pathToFile, request.getIdPartOfFile());
+        QueryWriter.writeContext(socket, pathToFile, request.getIdPartOfFile());
 
     }
 }

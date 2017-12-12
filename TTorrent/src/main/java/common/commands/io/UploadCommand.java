@@ -51,9 +51,9 @@ public class UploadCommand implements ICommand {
 
             // state add new file !!!!!
 
-        } catch (IOException e) {
-            LOGGER.error(" not upload file " + args[1]);
-            LOGGER.error(e);
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.error(String.format(" not upload file %s; error %s",
+                    args[1], e));
         }
 
         return false;

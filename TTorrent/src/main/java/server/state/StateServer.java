@@ -61,7 +61,7 @@ public class StateServer implements IStateServer {
     }
 
     @Override
-    public void updateSharedFiles(ClientInfo clientInfo, List<Integer> idFiles) {
+    public void updateSharedFiles(ClientInfo clientInfo, Set<Integer> idFiles) {
 
     }
 }

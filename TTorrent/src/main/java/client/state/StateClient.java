@@ -59,7 +59,7 @@ public class StateClient implements IState, Serializable {
 
     @NotNull
     @Override
-    public Set<Object> getListIdFiles() {
+    public Set<Integer> getListIdFiles() {
         return Collections.unmodifiableSet(idxFileToPath.keySet());
     }
 

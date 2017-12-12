@@ -29,5 +29,5 @@ public interface IStateServer {
 
     Set<ClientInfo> getClients();
 
-    void updateSharedFiles(ClientInfo clientInfo, List<Integer> idFiles);
+    void updateSharedFiles(ClientInfo clientInfo, Set<Integer> idFiles);
 }

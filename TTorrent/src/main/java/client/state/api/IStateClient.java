@@ -17,7 +17,7 @@ public interface IStateClient {
     Map<Path, IClientFile> getAllFilesWithInfo();
 
     @NotNull
-    Set<Object> getListIdFiles();
+    Set<Integer> getListIdFiles();
 
     @Nullable
     Path getPathByFileId(int idFile);
