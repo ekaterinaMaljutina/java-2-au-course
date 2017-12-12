@@ -1,4 +1,4 @@
-package client;
+package client.impl;
 
 import client.api.IClientFile;
 import common.files.FilesCommon;

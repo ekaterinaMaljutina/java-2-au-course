@@ -1,4 +1,4 @@
-package server.state;
+package server.api;
 
 import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;

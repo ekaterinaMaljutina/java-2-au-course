@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import server.api.IServerLogic;
-import server.state.IStateServer;
+import server.api.IStateServer;
 
 import java.io.IOException;
 import java.io.InputStream;

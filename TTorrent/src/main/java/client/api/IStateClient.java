@@ -1,4 +1,4 @@
-package client.state.api;
+package client.api;
 
 import client.api.IClientFile;
 import org.jetbrains.annotations.NotNull;

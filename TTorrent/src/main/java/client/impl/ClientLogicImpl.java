@@ -1,7 +1,7 @@
-package client;
+package client.impl;
 
 import client.api.IClientLogic;
-import client.state.api.IState;
+import client.api.IState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

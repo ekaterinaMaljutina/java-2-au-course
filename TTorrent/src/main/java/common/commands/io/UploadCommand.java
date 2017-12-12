@@ -1,6 +1,6 @@
 package common.commands.io;
 
-import client.state.api.IState;
+import client.api.IState;
 import common.files.FileInfoImpl;
 import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;

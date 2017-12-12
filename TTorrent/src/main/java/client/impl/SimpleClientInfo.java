@@ -1,4 +1,4 @@
-package client;
+package client.impl;
 
 import client.api.ClientInfo;
 
@@ -10,6 +10,11 @@ public class SimpleClientInfo implements ClientInfo {
 
     public SimpleClientInfo(byte b1, byte b2, byte b3, byte b4, int port) {
         ipAddress = new byte[]{b1, b2, b3, b4};
+        this.port = port;
+    }
+    public SimpleClientInfo(byte[] ip, int port) {
+        assert ip.length == 4; // ipv4
+        ipAddress = ip;
         this.port = port;
     }
 

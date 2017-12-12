@@ -1,12 +1,13 @@
 package common.commands.handlers.server;
 
 import client.api.ClientInfo;
+import client.impl.SimpleClientInfo;
 import common.commands.request.SourcesRequest;
 import common.commands.response.SourcesResponse;
 import common.nio.QueryReader;
 import common.nio.QueryWriter;
 import org.jetbrains.annotations.NotNull;
-import server.state.IStateServer;
+import server.api.IStateServer;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -24,8 +25,7 @@ public class SourcesCommand implements IServerCommand {
                         stateClient.getIdFilesOnClients(clientInfo)
                                 .contains(request.getIdFile()))
                 .map(clientInfo ->
-                        new SourcesResponse.ClientSource(
-                                clientInfo.getIpAddress(), clientInfo.getPort()))
+                        new SimpleClientInfo(clientInfo.getIpAddress(), clientInfo.getPort()))
                 .collect(Collectors.toList());
         SourcesResponse response = new SourcesResponse(clientInfoList);
         QueryWriter.writeMessage(socket, response);

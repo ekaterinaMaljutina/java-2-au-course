@@ -1,13 +1,13 @@
 package common.commands.handlers.server;
 
-import client.SimpleClientInfo;
+import client.impl.SimpleClientInfo;
 import client.api.ClientInfo;
 import common.commands.request.UpdateRequest;
 import common.commands.response.UpdateResponse;
 import common.nio.QueryReader;
 import common.nio.QueryWriter;
 import org.jetbrains.annotations.NotNull;
-import server.state.IStateServer;
+import server.api.IStateServer;
 
 import java.io.IOException;
 import java.net.Socket;

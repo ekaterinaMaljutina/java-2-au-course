@@ -1,6 +1,6 @@
 package common.commands.io;
 
-import client.state.api.IState;
+import client.api.IState;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

@@ -1,8 +1,9 @@
-package server.state;
+package server.impl;
 
 import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import server.api.ISharedFiles;
 
 import java.io.Serializable;
 import java.util.Map;

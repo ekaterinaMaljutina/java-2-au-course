@@ -1,12 +1,12 @@
-package server.state;
+package server.impl;
 
 import client.api.ClientInfo;
 import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import server.api.IStateServer;
 
 import java.sql.Time;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

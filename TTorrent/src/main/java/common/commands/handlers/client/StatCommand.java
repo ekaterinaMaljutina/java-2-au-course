@@ -1,7 +1,7 @@
 package common.commands.handlers.client;
 
 import client.api.IClientFile;
-import client.state.api.IState;
+import client.api.IState;
 import common.commands.request.StatRequest;
 import common.commands.response.StatResponse;
 import common.nio.QueryReader;

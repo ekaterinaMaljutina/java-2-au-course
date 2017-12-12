@@ -1,8 +1,9 @@
 package client;
 
 import client.api.IClientLogic;
-import client.state.StateClient;
-import client.state.api.IState;
+import client.impl.ClientLogicImpl;
+import client.impl.StateClient;
+import client.api.IState;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import org.apache.logging.log4j.LogManager;

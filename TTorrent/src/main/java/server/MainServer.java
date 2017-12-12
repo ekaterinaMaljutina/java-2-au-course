@@ -2,8 +2,8 @@ package server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import server.state.IStateServer;
-import server.state.StateServer;
+import server.api.IStateServer;
+import server.impl.StateServer;
 
 import java.io.IOException;
 

@@ -1,7 +1,7 @@
 package client;
 
 import client.api.ExitCommandListener;
-import client.state.api.IState;
+import client.api.IState;
 import common.commands.io.*;
 import org.jetbrains.annotations.NotNull;
 

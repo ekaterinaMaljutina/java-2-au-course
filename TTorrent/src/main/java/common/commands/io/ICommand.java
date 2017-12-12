@@ -1,6 +1,6 @@
 package common.commands.io;
 
-import client.state.api.IState;
+import client.api.IState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;

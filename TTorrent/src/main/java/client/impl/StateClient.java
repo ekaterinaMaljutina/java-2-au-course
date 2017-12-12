@@ -1,7 +1,7 @@
-package client.state;
+package client.impl;
 
 import client.api.IClientFile;
-import client.state.api.IState;
+import client.api.IState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
