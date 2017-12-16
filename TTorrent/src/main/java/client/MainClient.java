@@ -33,6 +33,7 @@ public class MainClient {
             // Here load old state client
             IState state = new StateClient(Collections.emptyMap());
 
+
             IClientLogic client =
                     new ClientLogicImpl(DEFAULT_CLIENT_PORT, state);
 

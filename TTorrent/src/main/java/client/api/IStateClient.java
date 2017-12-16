@@ -24,4 +24,6 @@ public interface IStateClient {
 
     @Nullable
     IClientFile getFileInfoById(int idFile);
+
+    void addClientListener(@NotNull ClientListener clientListener);
 }

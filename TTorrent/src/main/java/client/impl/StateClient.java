@@ -1,5 +1,6 @@
 package client.impl;
 
+import client.api.ClientListener;
 import client.api.IClientFile;
 import client.api.IState;
 import org.apache.logging.log4j.LogManager;
@@ -7,12 +8,11 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class StateClient implements IState, Serializable {
@@ -21,6 +21,7 @@ public class StateClient implements IState, Serializable {
 
     private final Map<Integer, Path> idxFileToPath;
     private final Map<Path, IClientFile> pathToFileInfo;
+    private List<ClientListener> clientListeners = new LinkedList<>();
 
 
     public StateClient(Map<String, IClientFile> pathNameToFileInfo) {
@@ -36,13 +37,24 @@ public class StateClient implements IState, Serializable {
     }
 
     @Override
-    public boolean partOfFile(@NotNull Path file, int numberOfPart) {
-        return false;
+    public void partOfFile(@NotNull Path file, int numberOfPart) {
+        if (pathToFileInfo.get(file).addPartOfFile(numberOfPart)) {
+            update();
+        }
     }
 
     @Override
     public boolean newFile(@NotNull Path file, IClientFile fileInfo) {
-        return false;
+        if (pathToFileInfo.containsKey(file) ||
+                idxFileToPath.containsKey(fileInfo.getId())) {
+            LOGGER.debug(" contains file " + file);
+            return false;
+        }
+
+        pathToFileInfo.put(file, fileInfo);
+        idxFileToPath.put(fileInfo.getId(), file);
+        update();
+        return true;
     }
 
     @NotNull
@@ -76,5 +88,22 @@ public class StateClient implements IState, Serializable {
             return pathToFileInfo.get(idxFileToPath.get(idFile));
         }
         return null;
+    }
+
+    @Override
+    public void addClientListener(@NotNull ClientListener clientListener) {
+        clientListeners.add(clientListener);
+    }
+
+    private void update() {
+        clientListeners
+                .forEach(clientListener -> {
+                    try {
+                        clientListener.changeState(this);
+                    } catch (IOException e) {
+                        LOGGER.error(" update state listener ERROR:" + e);
+                        e.printStackTrace();
+                    }
+                });
     }
 }

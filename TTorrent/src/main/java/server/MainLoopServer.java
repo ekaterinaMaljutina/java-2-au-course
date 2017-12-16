@@ -86,10 +86,19 @@ public class MainLoopServer implements IServerLogic {
         idToCommand.put(IdRequestToServer.REQUEST_SOURCES, new SourcesCommand());
         idToCommand.put(IdRequestToServer.REQUEST_UPDATE, new UpdateCommand());
         idToCommand.put(IdRequestToServer.REQUEST_UPLOAD, new UploadCommand());
+        idToCommand.put(IdRequestToServer.REQUEST_EXIT, new ExitCommand());
     }
 
     @Override
     public void shutdown() throws IOException {
+        clientUpdateScheduler.shutdown();
+        threadPool.shutdown();
+    }
 
+    private class ExitCommand implements IServerCommand {
+        @Override
+        public void runCommand(@NotNull Socket socket, @NotNull IStateServer stateServer) throws IOException, ClassNotFoundException {
+            shutdown();
+        }
     }
 }
