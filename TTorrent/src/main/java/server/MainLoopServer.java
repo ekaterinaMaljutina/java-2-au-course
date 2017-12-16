@@ -17,11 +17,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class MainLoopServer implements IServerLogic {
 
     private static final Logger LOGGER = LogManager.getLogger(MainLoopClient.class);
-    private static final int countThread = 4;
+    private static final int COUNT_THREAD = 4;
     private static final Map<Integer, IServerCommand> idToCommand = new HashMap<>();
 
 
@@ -29,15 +31,22 @@ public class MainLoopServer implements IServerLogic {
     private final IStateServer stateServer;
 
 
-    private ExecutorService threadPool = Executors.newFixedThreadPool(countThread);
+    private final ExecutorService threadPool = Executors.newFixedThreadPool(COUNT_THREAD);
+    private final ScheduledExecutorService clientUpdateScheduler =
+            new ScheduledThreadPoolExecutor(1);
 
     public MainLoopServer(int portServer, @NotNull IStateServer stateServer) {
         this.portServer = portServer;
         this.stateServer = stateServer;
+        intiMapCommand();
     }
 
     @Override
     public void start() throws IOException {
+
+        clientUpdateScheduler.execute(
+                new UpdateClient(clientUpdateScheduler, stateServer));
+
         LOGGER.debug("start server with top " + portServer);
         try (ServerSocket serverSocket = new ServerSocket(portServer)) {
             while (!serverSocket.isClosed()) {

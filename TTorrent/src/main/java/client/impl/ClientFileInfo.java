@@ -1,7 +1,7 @@
 package client.impl;
 
 import client.api.IClientFile;
-import common.files.FilesCommon;
+import common.Common;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -30,13 +30,13 @@ public class ClientFileInfo implements IClientFile, Serializable {
 
     @Override
     public boolean isDownloaded() {
-        return partsInClient.size() * FilesCommon.PATH_OF_FILE_SIZE >= sizeFile;
+        return partsInClient.size() * Common.PATH_OF_FILE_SIZE >= sizeFile;
     }
 
     @Override
     public boolean addPartOfFile(int idPart) {
         return !(partsInClient.contains(idPart)
-                || idPart * FilesCommon.PATH_OF_FILE_SIZE >= sizeFile)
+                || idPart * Common.PATH_OF_FILE_SIZE >= sizeFile)
                 && partsInClient.add(idPart);
     }
 

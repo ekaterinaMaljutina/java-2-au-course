@@ -1,6 +1,6 @@
 package common.nio;
 
-import common.files.FilesCommon;
+import common.Common;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,8 +29,8 @@ public class QueryWriter {
         try (final InputStream inputStreamFile = Files.newInputStream(pathToFile);
              OutputStream outputStream = socket.getOutputStream()) {
             IOUtils.copyLarge(inputStreamFile, outputStream,
-                    idPart * FilesCommon.PATH_OF_FILE_SIZE,
-                    FilesCommon.PATH_OF_FILE_SIZE);
+                    idPart * Common.PATH_OF_FILE_SIZE,
+                    Common.PATH_OF_FILE_SIZE);
         }
     }
 }
