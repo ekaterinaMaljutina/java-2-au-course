@@ -4,6 +4,7 @@ import client.api.ClientInfo;
 import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import server.api.ISharedFiles;
 import server.api.IStateServer;
 
 import java.sql.Time;
@@ -18,9 +19,15 @@ public class StateServer implements IStateServer {
 
     private final Map<ClientInfo, Time> lastUpdateClient = new ConcurrentHashMap<>();
 
+    private final ISharedFiles sharedFiles;
+
+    public StateServer(ISharedFiles sharedFiles) {
+        this.sharedFiles = sharedFiles;
+    }
+
     @Override
     public int newFile(@NotNull IFileInfo fileInfo) {
-        return 0;
+        return sharedFiles.newFile(fileInfo);
     }
 
     @Override
@@ -41,7 +48,7 @@ public class StateServer implements IStateServer {
 
     @Override
     public Map<Integer, IFileInfo> getAllFiles() {
-        return null;
+        return sharedFiles.getFiles();
     }
 
     @Override
