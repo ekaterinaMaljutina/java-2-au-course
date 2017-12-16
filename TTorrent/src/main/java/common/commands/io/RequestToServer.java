@@ -1,6 +1,7 @@
 package common.commands.io;
 
 import client.api.ClientInfo;
+import common.commands.request.ListRequest;
 import common.commands.request.SourcesRequest;
 import common.commands.request.UpdateRequest;
 import common.commands.request.UploadRequest;
@@ -42,7 +43,8 @@ public class RequestToServer implements IRequestToServer {
         LOGGER.info("send to list request");
         try (Socket socket =
                      new Socket(addressServer, portServer)) {
-            QueryWriter.writeMessage(socket, IdRequestToServer.LIST_REQUEST);
+            ListRequest request = new ListRequest();
+            QueryWriter.writeMessage(socket, request);
             ListResponse response = QueryReader.readQuery(socket);
             Map<Integer, IFileInfo> result = new HashMap<>();
             response.getListFiles().forEach(itemFile -> {

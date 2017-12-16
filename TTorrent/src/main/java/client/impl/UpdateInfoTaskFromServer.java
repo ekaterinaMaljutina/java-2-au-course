@@ -17,6 +17,8 @@ public class UpdateInfoTaskFromServer implements Runnable, ExitCommandListener {
             LogManager.getLogger(UpdateInfoTaskFromServer.class);
 
     private static final int COUNT_THREAD = 1;
+    private static final long UPDATE_PERIOD_MILLIS = TimeUnit.MINUTES
+            .toMillis(1);
 
     private final ScheduledExecutorService executorService;
     private final IState stateClient;
@@ -31,16 +33,23 @@ public class UpdateInfoTaskFromServer implements Runnable, ExitCommandListener {
         executorService.schedule(this, 0, TimeUnit.MICROSECONDS);
     }
 
+    public void runAsych() {
+        executorService.schedule(() -> server.update(portClient,
+                stateClient.getListIdFiles()), 0, TimeUnit.NANOSECONDS);
+    }
+
     @Override
     public void run() {
         try {
             if (server.update(portClient, stateClient.getListIdFiles())) {
-            LOGGER.debug("update file OK");
+                LOGGER.debug("update file OK");
             }
 
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.error("update file ERROR " + e);
         }
+        executorService.schedule(this, UPDATE_PERIOD_MILLIS,
+                TimeUnit.MILLISECONDS);
     }
 
     @Override

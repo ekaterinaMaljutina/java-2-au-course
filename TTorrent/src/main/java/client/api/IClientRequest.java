@@ -7,9 +7,7 @@ import java.nio.file.Path;
 import java.util.Set;
 
 public interface IClientRequest {
-    Set<Integer> stat(int id) throws IOException;
+    Set<Integer> stat(int id) throws IOException, ClassNotFoundException;
 
     boolean get(int id, int partNumber, @NotNull Path out) throws IOException;
-
-
 }

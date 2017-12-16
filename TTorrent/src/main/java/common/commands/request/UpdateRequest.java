@@ -1,9 +1,11 @@
 package common.commands.request;
 
+import common.commands.io.IdRequestToServer;
+
 import java.io.Serializable;
 import java.util.Set;
 
-public class UpdateRequest implements Serializable {
+public class UpdateRequest implements Request,Serializable {
     private final int port;
     private final Set<Integer> idFiles;
 
@@ -26,5 +28,10 @@ public class UpdateRequest implements Serializable {
                 "port=" + port +
                 ", idFiles=" + idFiles +
                 '}';
+    }
+
+    @Override
+    public Integer getId() {
+        return IdRequestToServer.UPDATE_REQUEST;
     }
 }

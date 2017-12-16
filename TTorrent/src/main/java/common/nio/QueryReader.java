@@ -1,10 +1,12 @@
 package common.nio;
 
+import common.Common;
+import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Path;
 
 public class QueryReader {
 
@@ -16,6 +18,28 @@ public class QueryReader {
                         .getInputStream())) {
             return (T) inputStream.readObject();
         }
+    }
+
+
+    public static void readContext(@NotNull Socket socket, Path pathToFile, int idPart)
+            throws IOException {
+
+        try (RandomAccessFile file = new RandomAccessFile(pathToFile.toFile(), "rw");
+             InputStream inputStream = socket.getInputStream()) {
+            file.seek(Common.PATH_OF_FILE_SIZE * idPart);
+            IOUtils.copyLarge(inputStream, new OutputStream() {
+                @Override
+                public void write(int b) throws IOException {
+                    throw new IOException("not implemented");
+                }
+
+                @Override
+                public void write(@NotNull byte[] b, int off, int len) throws IOException {
+                    file.write(b, off, len);
+                }
+            });
+        }
+
     }
 
 }

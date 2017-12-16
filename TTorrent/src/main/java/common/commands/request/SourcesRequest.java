@@ -1,8 +1,10 @@
 package common.commands.request;
 
+import common.commands.io.IdRequestToServer;
+
 import java.io.Serializable;
 
-public class SourcesRequest implements Serializable {
+public class SourcesRequest implements Request, Serializable {
     private final int idFile;
 
     public SourcesRequest(int idFile) {
@@ -18,5 +20,10 @@ public class SourcesRequest implements Serializable {
         return "SourcesRequest{" +
                 "idFile=" + idFile +
                 '}';
+    }
+
+    @Override
+    public Integer getId() {
+        return IdRequestToServer.SOURCES_REQUEST;
     }
 }

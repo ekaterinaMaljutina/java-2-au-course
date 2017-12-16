@@ -1,8 +1,10 @@
 package common.commands.request;
 
+import common.commands.handlers.client.IdRequestToClient;
+
 import java.io.Serializable;
 
-public class GetRequest implements Serializable {
+public class GetRequest implements Request, Serializable {
     private final int idFile;
     private final int idPartOfFile;
 
@@ -25,5 +27,10 @@ public class GetRequest implements Serializable {
                 "idFile=" + idFile +
                 ", idPartOfFile=" + idPartOfFile +
                 '}';
+    }
+
+    @Override
+    public Integer getId() {
+        return IdRequestToClient.REQUEST_GET;
     }
 }
