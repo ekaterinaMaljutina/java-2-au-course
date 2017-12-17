@@ -46,7 +46,9 @@ public class ClientLogicImpl implements IClientLogic {
 
     @Override
     public void shutdown() throws IOException {
-        serverSocket.close();
+        if (serverSocket != null) {
+            serverSocket.close();
+        }
     }
 
     @Override

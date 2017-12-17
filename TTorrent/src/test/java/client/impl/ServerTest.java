@@ -21,10 +21,14 @@ import static org.junit.Assert.assertTrue;
 
 public class ServerTest {
     private static final int PORT = 20003;
-    private static final IFileInfo FILE1 = new FileInfoImpl("name", 100);
-    private static final IFileInfo FILE2 = new FileInfoImpl("name2", 1000);
-    private static final IFileInfo FILE3 = new FileInfoImpl("name3", 10000);
-    private static final IFileInfo FILE4 = new FileInfoImpl("name", 100000);
+    private static final IFileInfo FILE1 =
+            new FileInfoImpl("name", 100);
+    private static final IFileInfo FILE2 =
+            new FileInfoImpl("name2", 1000);
+    private static final IFileInfo FILE3 =
+            new FileInfoImpl("name3", 10000);
+    private static final IFileInfo FILE4 =
+            new FileInfoImpl("name", 100000);
     private static MainLoopServer myServer;
 
     @BeforeClass
@@ -65,12 +69,12 @@ public class ServerTest {
 
     @Test
     public void uploadRequest() throws IOException, ClassNotFoundException {
-        final RequestToServer server = new RequestToServer(InetAddress.getLoopbackAddress(), PORT);
+        final RequestToServer server =
+                new RequestToServer(InetAddress.getLoopbackAddress(), PORT);
         final IFileInfo file = new FileInfoImpl("myFile", 10003);
         final int id = server.upload(file);
 
         assertFalse(Arrays.asList(1, 2, 3, 4).contains(id));
-
         assertTrue(server.getListFiles().containsValue(file));
     }
 
@@ -78,13 +82,16 @@ public class ServerTest {
     public void updateAndSourcesRequests() throws IOException, ClassNotFoundException {
         final RequestToServer server = new RequestToServer(InetAddress.getLoopbackAddress(), PORT);
 
-        final boolean update = server.update(30000,
-                new HashSet<>(Arrays.asList(1, 2, 3)));
+        final boolean update = server.update(30000, new HashSet<>(Arrays.asList(1, 2, 3)));
 
         assertTrue(update);
-        assertTrue(server.sources(1).stream().anyMatch(clientInfo -> clientInfo.getPort() == 30000));
-        assertTrue(server.sources(2).stream().anyMatch(clientInfo -> clientInfo.getPort() == 30000));
-        assertTrue(server.sources(3).stream().anyMatch(clientInfo -> clientInfo.getPort() == 30000));
-        assertFalse(server.sources(100).stream().anyMatch(clientInfo -> clientInfo.getPort() == 30000));
+        assertTrue(server.sources(1).stream().anyMatch(clientInfo ->
+                clientInfo.getPort() == 30000));
+        assertTrue(server.sources(2).stream().anyMatch(clientInfo ->
+                clientInfo.getPort() == 30000));
+        assertTrue(server.sources(3).stream().anyMatch(clientInfo ->
+                clientInfo.getPort() == 30000));
+        assertFalse(server.sources(100).stream().anyMatch(clientInfo ->
+                clientInfo.getPort() == 30000));
     }
 }

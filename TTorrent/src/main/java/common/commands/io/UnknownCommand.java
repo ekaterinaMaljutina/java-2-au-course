@@ -8,9 +8,8 @@ import java.util.Map;
 public class UnknownCommand implements ICommand {
 
 
-    private final Map<Integer, ICommand> allComands;
-
     private static final String title = "%5s|%20s";
+    private final Map<Integer, ICommand> allComands;
 
     public UnknownCommand(Map<Integer, ICommand> allComands) {
         this.allComands = allComands;
