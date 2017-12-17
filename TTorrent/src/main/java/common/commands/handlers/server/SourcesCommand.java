@@ -2,9 +2,9 @@ package common.commands.handlers.server;
 
 import client.api.ClientInfo;
 import client.impl.SimpleClientInfo;
+import common.commands.request.Request;
 import common.commands.request.SourcesRequest;
 import common.commands.response.SourcesResponse;
-import common.nio.QueryReader;
 import common.nio.QueryWriter;
 import org.jetbrains.annotations.NotNull;
 import server.api.IStateServer;
@@ -17,8 +17,9 @@ import java.util.stream.Collectors;
 public class SourcesCommand implements IServerCommand {
     @Override
     public void runCommand(@NotNull Socket socket,
-                           @NotNull IStateServer stateClient) throws IOException, ClassNotFoundException {
-        SourcesRequest request = QueryReader.readQuery(socket);
+                           @NotNull IStateServer stateClient,
+                           @NotNull Request req) throws IOException, ClassNotFoundException {
+        SourcesRequest request = (SourcesRequest) req;
         LOGGER.info(String.format("get command %s ", request));
         List<ClientInfo> clientInfoList = stateClient.getClients().stream()
                 .filter(clientInfo ->
