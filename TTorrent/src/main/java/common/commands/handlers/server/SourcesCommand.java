@@ -29,6 +29,7 @@ public class SourcesCommand implements IServerCommand {
                         new SimpleClientInfo(clientInfo.getIpAddress(), clientInfo.getPort()))
                 .collect(Collectors.toList());
         SourcesResponse response = new SourcesResponse(clientInfoList);
+        LOGGER.info("create response " + response);
         QueryWriter.writeMessage(socket, response);
     }
 }

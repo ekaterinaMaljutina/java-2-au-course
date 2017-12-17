@@ -1,30 +1,65 @@
 package server;
 
-import common.nio.ObjectWrite;
+import common.Common;
+import common.nio.ObjectReader;
+import common.nio.ObjectWriter;
+import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import server.api.ISharedFiles;
 import server.api.IStateServer;
 import server.impl.SharedFiles;
 import server.impl.StateServer;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 
 public class MainServer {
 
     private static final Logger LOGGER = LogManager.getLogger(MainServer.class);
-    private static final int DEFAULT_PORT = 8081;
-    private static final String PATH_TO_CONFIG = "./src/main/resources/server.cfg";
 
     public static void main(String[] args) {
-        // update connection with client ????
-        ISharedFiles sharedFiles = new SharedFiles(Collections.emptyMap());
+
+        final ArgumentParser parser = createParser();
+        final Namespace parsingResult;
+        try {
+            parsingResult = parser.parseArgs(args);
+        } catch (ArgumentParserException e) {
+            parser.handleError(e);
+            return;
+        }
+
+        final Integer port = parsingResult.getInt("port");
+        final String config = parsingResult.getString("config");
+        final Path path = Paths.get(config);
+
+        ISharedFiles sharedFiles;
+        if (path.toFile().exists()) {
+            try {
+                LOGGER.info(" load saved state files");
+                sharedFiles = (SharedFiles) ObjectReader.readFileToObject(config);
+                sharedFiles.initFileListener();
+            } catch (IOException | ClassNotFoundException e) {
+                LOGGER.info(" load ERROR " + e);
+                parser.printHelp();
+                return;
+            }
+        } else {
+            LOGGER.info("start with empty state ");
+            sharedFiles = new SharedFiles(Collections.emptyMap());
+        }
 
         sharedFiles.addListenerChangeFiles(state -> {
             try {
                 LOGGER.debug(" change files ");
-                ObjectWrite.writeObjectToFile(PATH_TO_CONFIG, state);
+                ObjectWriter.writeObjectToFile(config, state);
             } catch (IOException e) {
                 LOGGER.error(" change ERROR not save:" + e);
             }
@@ -32,7 +67,7 @@ public class MainServer {
 
         IStateServer stateServer = new StateServer(sharedFiles);
 
-        MainLoopServer mainLoopServer = new MainLoopServer(DEFAULT_PORT, stateServer);
+        MainLoopServer mainLoopServer = new MainLoopServer(port, stateServer);
         try {
             mainLoopServer.start();
         } catch (IOException e) {
@@ -40,5 +75,25 @@ public class MainServer {
         }
 
 
+    }
+
+    private static @NotNull
+    ArgumentParser createParser() {
+        final ArgumentParser parser = ArgumentParsers.newArgumentParser("server")
+                .description("Torrent tracker server")
+                .defaultHelp(true);
+
+        parser.addArgument("-p", "--port")
+                .type(Integer.class)
+                .choices(Arguments.range(0, (1 << 16) - 1))
+                .setDefault(Common.DEFAULT_SERVER_PORT)
+                .help("port for listening");
+
+        parser.addArgument("-c", "--config")
+                .type(String.class)
+                .setDefault(Common.PATH_TO_SERVER_CONFIG)
+                .help("path to configuration file");
+
+        return parser;
     }
 }

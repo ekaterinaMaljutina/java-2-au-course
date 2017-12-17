@@ -69,7 +69,7 @@ public class Downloader implements ExitCommandListener {
 
         private final int idFile;
 
-        public ResolverFile(int idFile) {
+        ResolverFile(int idFile) {
             this.idFile = idFile;
         }
 
@@ -171,7 +171,8 @@ public class Downloader implements ExitCommandListener {
         private boolean canSaveToExistedFile(@NotNull Path path,
                                              @NotNull IFileInfo info) {
             if (FileUtils.sizeOf(path.toFile()) == info.getSize()) {
-                LOGGER.info(String.format("Download file with id = %d to existed file %s", idFile,
+                LOGGER.info(String.format("Download file with id = %d " +
+                                "to existed file %s", idFile,
                         path.toAbsolutePath()));
                 return true;
             }
@@ -187,7 +188,7 @@ public class Downloader implements ExitCommandListener {
     private class DownloaderFile implements Runnable {
         private final int idFile;
 
-        public DownloaderFile(int idFile) {
+        DownloaderFile(int idFile) {
             this.idFile = idFile;
         }
 
@@ -200,15 +201,14 @@ public class Downloader implements ExitCommandListener {
                     partsForDownload.poll();
 
             String filePath = stateClient.getPathByFileId(idFile);
-            Path path = Paths.get(filePath);
-            if (idPartForDownload == null || checkExistFile(path)) {
+            if (idPartForDownload == null || checkExistFile(filePath)) {
                 LOGGER.debug(" file id = " + idFile + " loaded or not exist");
                 idFileToDownloadPart.remove(idFile);
                 return;
             }
 
             try {
-                if (!loadPartFile(idFile, idPartForDownload, path)) {
+                if (!loadPartFile(idFile, idPartForDownload, filePath)) {
                     LOGGER.warn(" Not part on other client ");
                     partsForDownload.add(idPartForDownload);
                     executorService.schedule(this, 10, TimeUnit.SECONDS);
@@ -227,9 +227,10 @@ public class Downloader implements ExitCommandListener {
 
         private boolean loadPartFile(@NotNull Integer idFile,
                                      @NotNull Integer idPartForDownload,
-                                     @NotNull Path filePath)
+                                     @NotNull String filePath)
                 throws IOException, ClassNotFoundException {
             boolean flagSuccess = false;
+            Path path = Paths.get(filePath);
             final List<ClientInfo> clientInfoList = server.sources(idFile);
             for (ClientInfo clientInfo : clientInfoList) {
                 IClientRequest clientRequest =
@@ -239,7 +240,7 @@ public class Downloader implements ExitCommandListener {
                                 clientInfo.getPort());
                 Set<Integer> parts = clientRequest.stat(idFile);
                 if (parts.contains(idPartForDownload)) {
-                    if (clientRequest.get(idFile, idPartForDownload, filePath)) {
+                    if (clientRequest.get(idFile, idPartForDownload, path)) {
                         flagSuccess = true;
                         LOGGER.debug(String.format("Load part %d for " +
                                 "file %d ", idPartForDownload, idFile));
@@ -248,7 +249,7 @@ public class Downloader implements ExitCommandListener {
                         if (file != null && file.getParts().isEmpty()) {
                             updateInfoTaskFromServer.runAsych();
                         }
-                        stateClient.partOfFile(filePath.toString(), idPartForDownload);
+                        stateClient.partOfFile(filePath, idPartForDownload);
 
                         IClientFile fileInfo = stateClient.getFileInfoById
                                 (idFile);
@@ -262,8 +263,8 @@ public class Downloader implements ExitCommandListener {
             return flagSuccess;
         }
 
-        private boolean checkExistFile(@Nullable Path path) {
-            return path == null || !path.toFile().exists();
+        private boolean checkExistFile(@Nullable String path) {
+            return path == null || !Paths.get(path).toFile().exists();
         }
     }
 }

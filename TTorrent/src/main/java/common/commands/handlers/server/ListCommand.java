@@ -26,6 +26,7 @@ public class ListCommand implements IServerCommand {
                                     fileInfo.getName(), fileInfo.getSize()));
                 });
         ListResponse response = new ListResponse(fileList);
+        LOGGER.info("create response " + response);
         QueryWriter.writeMessage(socket, response);
     }
 }

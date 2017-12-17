@@ -19,4 +19,6 @@ public interface ISharedFiles extends Serializable {
     int newFile(@NotNull IFileInfo fileInfo);
 
     void addListenerChangeFiles(@NotNull ChangeFileList changeFileList);
+
+    void initFileListener();
 }

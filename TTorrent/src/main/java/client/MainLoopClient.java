@@ -61,15 +61,14 @@ public class MainLoopClient implements Runnable {
                 new GetListCommand(address, port));
         idCommandToImplCommand.put(IdRequestToServer.EXIT_REQUEST,
                 new MainLoopClient.ExitCommand());
-        idCommandToImplCommand.put(IdRequestToServer.UNKNOWN_REQUEST,
-                new UnknownCommand());
-
         idCommandToImplCommand.put(IdRequestToServer.UPLOAD_REQUEST,
                 new UploadCommand(address, port));
         idCommandToImplCommand.put(IdRequestToServer.SOURCES_REQUEST,
                 new DownloadFileCommand(downloader));
         idCommandToImplCommand.put(IdRequestToServer.SHOW_LOCAL_FILES_REQUEST,
                 new GetLocalFilesCommand());
+        idCommandToImplCommand.put(IdRequestToServer.UNKNOWN_REQUEST,
+                new UnknownCommand(idCommandToImplCommand));
     }
 
     public class ExitCommand implements ICommand {

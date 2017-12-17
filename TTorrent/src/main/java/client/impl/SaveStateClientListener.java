@@ -2,7 +2,7 @@ package client.impl;
 
 import client.api.ClientListener;
 import client.api.IStateClient;
-import common.nio.ObjectWrite;
+import common.nio.ObjectWriter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -17,6 +17,6 @@ public class SaveStateClientListener implements ClientListener, Serializable {
 
     @Override
     public void changeState(@NotNull IStateClient stateClient) throws IOException {
-        ObjectWrite.writeObjectToFile(file, stateClient);
+        ObjectWriter.writeObjectToFile(file, stateClient);
     }
 }

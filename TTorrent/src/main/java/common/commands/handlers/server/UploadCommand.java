@@ -20,7 +20,9 @@ public class UploadCommand implements IServerCommand {
         UploadRequest request = (UploadRequest) req;
         LOGGER.info(String.format("get command %s ", request));
         int idFile = stateClient.newFile(new FileInfoImpl(request.getNameFile(), request.getSize()));
-        QueryWriter.writeMessage(socket, new UploadResponse(idFile));
+        UploadResponse response = new UploadResponse(idFile);
+        LOGGER.info("create response " + response);
+        QueryWriter.writeMessage(socket, response);
     }
 
 

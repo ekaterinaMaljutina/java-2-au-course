@@ -7,18 +7,24 @@ import server.api.ChangeFileList;
 import server.api.ISharedFiles;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SharedFiles implements ISharedFiles, Serializable {
 
     private final Map<Integer, IFileInfo> idToFileInfo;
-    private final List<ChangeFileList> changeFileLists = new CopyOnWriteArrayList<>();
+    private transient List<ChangeFileList> changeFileLists;
 
     public SharedFiles(Map<Integer, IFileInfo> idToFileInfo) {
         this.idToFileInfo = new ConcurrentHashMap<>(idToFileInfo);
+        initFileListener();
+    }
+
+    @Override
+    public void initFileListener() {
+        changeFileLists = new ArrayList<>();
     }
 
     @Override
