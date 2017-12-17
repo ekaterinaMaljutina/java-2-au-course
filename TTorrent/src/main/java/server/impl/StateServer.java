@@ -64,11 +64,11 @@ public class StateServer implements IStateServer {
 
     @Override
     public Set<ClientInfo> getClients() {
-        return clientToListFiles.keySet(); // unmodif ???
+        return clientToListFiles.keySet();
     }
 
     @Override
     public void updateSharedFiles(ClientInfo clientInfo, Set<Integer> idFiles) {
-        //???
+        clientToListFiles.put(clientInfo, idFiles);
     }
 }

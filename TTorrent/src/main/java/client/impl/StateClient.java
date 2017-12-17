@@ -10,7 +10,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class StateClient implements IState, Serializable {
@@ -36,7 +39,9 @@ public class StateClient implements IState, Serializable {
 
     @Override
     public void partOfFile(@NotNull String file, int numberOfPart) {
-        if (pathToFileInfo.get(file).addPartOfFile(numberOfPart)) {
+        ClientFileInfo clientFileInfo = (ClientFileInfo)
+                pathToFileInfo.get(file);
+        if (clientFileInfo.addPartOfFile(numberOfPart)) {
             update();
         }
     }
@@ -58,19 +63,19 @@ public class StateClient implements IState, Serializable {
     @NotNull
     @Override
     public Set<String> getAllFiles() {
-        return Collections.unmodifiableSet(pathToFileInfo.keySet());
+        return pathToFileInfo.keySet(); // unmodif collection
     }
 
     @NotNull
     @Override
     public Map<String, IClientFile> getAllFilesWithInfo() {
-        return Collections.unmodifiableMap(pathToFileInfo);
+        return pathToFileInfo; // unmodif collection
     }
 
     @NotNull
     @Override
     public Set<Integer> getListIdFiles() {
-        return Collections.unmodifiableSet(idxFileToPath.keySet());
+        return idxFileToPath.keySet(); // unmodif collection
     }
 
     @Nullable

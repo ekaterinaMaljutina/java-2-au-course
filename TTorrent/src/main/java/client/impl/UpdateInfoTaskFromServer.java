@@ -17,8 +17,7 @@ public class UpdateInfoTaskFromServer implements Runnable, ExitCommandListener {
             LogManager.getLogger(UpdateInfoTaskFromServer.class);
 
     private static final int COUNT_THREAD = 1;
-    private static final long UPDATE_PERIOD_MILLIS = TimeUnit.MINUTES
-            .toMillis(1);
+    private static final long UPDATE_PERIOD_MILLIS = TimeUnit.MINUTES.toMillis(1);
 
     private final ScheduledExecutorService executorService;
     private final IState stateClient;

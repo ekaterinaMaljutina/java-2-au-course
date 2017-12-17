@@ -43,7 +43,9 @@ public class Downloader implements ExitCommandListener {
     private final Map<Integer, BlockingQueue<Integer>> idFileToDownloadPart =
             new ConcurrentHashMap<>();
 
-    public Downloader(UpdateInfoTaskFromServer updateInfoTaskFromServer, IState stateClient, IRequestToServer server, Path dirForDownloaderFiles) {
+    public Downloader(UpdateInfoTaskFromServer updateInfoTaskFromServer,
+                      IState stateClient, IRequestToServer server,
+                      Path dirForDownloaderFiles) {
         this.updateInfoTaskFromServer = updateInfoTaskFromServer;
         this.stateClient = stateClient;
         this.server = server;
@@ -118,16 +120,20 @@ public class Downloader implements ExitCommandListener {
         }
 
         private void downloadToExistedFile(@NotNull IClientFile localInfo) {
+            LOGGER.debug(" download exist file ");
             final int partCount = partCount(localInfo.getSize());
             final Set<Integer> loadedParts = localInfo.getParts();
             final BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(partCount - loadedParts.size());
+            StringBuilder ids = new StringBuilder(" ");
             for (int i = 0; i < partCount; i++) {
                 if (!loadedParts.contains(i)) {
                     queue.add(i);
+                    ids.append(i).append(" ");
                 }
             }
 
             if (queue.size() > 0) {
+                LOGGER.debug(" put id file to queue " + ids);
                 idFileToDownloadPart.put(idFile, queue);
                 final Runnable downloader = new DownloaderFile(idFile);
                 for (int i = 0; i < TASKS_PER_FILE_LIMIT; i++) {
@@ -195,18 +201,17 @@ public class Downloader implements ExitCommandListener {
         @Override
         public void run() {
 
-            BlockingQueue<Integer> partsForDownload
-                    = idFileToDownloadPart.getOrDefault(idFile, null);
+            BlockingQueue<Integer> partsForDownload = idFileToDownloadPart.getOrDefault(idFile,
+                    null);
             Integer idPartForDownload = partsForDownload == null ? null :
                     partsForDownload.poll();
 
             String filePath = stateClient.getPathByFileId(idFile);
             if (idPartForDownload == null || checkExistFile(filePath)) {
-                LOGGER.debug(" file id = " + idFile + " loaded or not exist");
                 idFileToDownloadPart.remove(idFile);
                 return;
             }
-
+            LOGGER.debug(" id " + idPartForDownload + " path " + filePath);
             try {
                 if (!loadPartFile(idFile, idPartForDownload, filePath)) {
                     LOGGER.warn(" Not part on other client ");
@@ -231,6 +236,7 @@ public class Downloader implements ExitCommandListener {
                 throws IOException, ClassNotFoundException {
             boolean flagSuccess = false;
             Path path = Paths.get(filePath);
+            LOGGER.debug("get source for client for file " + idFile);
             final List<ClientInfo> clientInfoList = server.sources(idFile);
             for (ClientInfo clientInfo : clientInfoList) {
                 IClientRequest clientRequest =
@@ -238,6 +244,8 @@ public class Downloader implements ExitCommandListener {
                                 InetAddress.getByAddress(
                                         clientInfo.getIpAddress()),
                                 clientInfo.getPort());
+                LOGGER.debug(" send stat request to other client with port = " +
+                        clientInfo.getPort());
                 Set<Integer> parts = clientRequest.stat(idFile);
                 if (parts.contains(idPartForDownload)) {
                     if (clientRequest.get(idFile, idPartForDownload, path)) {
@@ -249,10 +257,11 @@ public class Downloader implements ExitCommandListener {
                         if (file != null && file.getParts().isEmpty()) {
                             updateInfoTaskFromServer.runAsych();
                         }
+                        LOGGER.info(" OK load part " + idPartForDownload + " " +
+                                "for file " + filePath);
                         stateClient.partOfFile(filePath, idPartForDownload);
 
-                        IClientFile fileInfo = stateClient.getFileInfoById
-                                (idFile);
+                        IClientFile fileInfo = stateClient.getFileInfoById(idFile);
                         if (fileInfo != null && fileInfo.isDownloaded()) {
                             idFileToDownloadPart.remove(idFile);
                         }

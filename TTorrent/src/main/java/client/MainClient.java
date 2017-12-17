@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
@@ -62,7 +63,12 @@ public class MainClient {
             IState state;
             if (configPath.toFile().exists()) {
                 LOGGER.info("load saved state");
-                state = (StateClient) ObjectReader.readFileToObject(configPath.toString());
+                try {
+                    state = (StateClient)
+                            ObjectReader.readFileToObject(configPath.toString());
+                } catch (InvalidClassException ex) {
+                    state = new StateClient(Collections.emptyMap());
+                }
             } else {
                 LOGGER.info(" state is empty loading ");
                 state = new StateClient(Collections.emptyMap());

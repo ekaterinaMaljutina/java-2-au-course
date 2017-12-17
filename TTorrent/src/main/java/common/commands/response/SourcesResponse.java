@@ -23,33 +23,4 @@ public class SourcesResponse implements Serializable {
                 "clientSourceList=" + clientSourceList +
                 '}';
     }
-
-    public static class ClientSource implements ClientInfo {
-        private final byte[] api;
-        private final int port;
-
-        public ClientSource(byte[] api, int port) {
-            this.api = api;
-            this.port = port;
-
-        }
-
-        @Override
-        public byte[] getIpAddress() {
-            return api;
-        }
-
-        @Override
-        public int getPort() {
-            return port;
-        }
-
-        @Override
-        public String toString() {
-            return "{" +
-                    "api='" + Arrays.toString(api) + '\'' +
-                    ", port=" + port +
-                    "};";
-        }
-    }
 }

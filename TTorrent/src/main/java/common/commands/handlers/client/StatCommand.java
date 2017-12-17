@@ -2,9 +2,9 @@ package common.commands.handlers.client;
 
 import client.api.IClientFile;
 import client.api.IState;
+import common.commands.request.Request;
 import common.commands.request.StatRequest;
 import common.commands.response.StatResponse;
-import common.nio.QueryReader;
 import common.nio.QueryWriter;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,9 +15,11 @@ public class StatCommand implements ClientCommand {
 
     @Override
     public void runCommand(@NotNull Socket socket,
-                           @NotNull IState stateClient) throws IOException, ClassNotFoundException {
+                           @NotNull IState stateClient,
+                           @NotNull Request req)
+            throws IOException, ClassNotFoundException {
 
-        StatRequest request = QueryReader.readQuery(socket);
+        StatRequest request = (StatRequest) req;
         LOGGER.info(String.format("get command %s ", request));
         IClientFile fileInfo = stateClient.getFileInfoById(request.getIdFile());
         if (fileInfo == null) {
@@ -26,5 +28,10 @@ public class StatCommand implements ClientCommand {
         }
         StatResponse response = new StatResponse(fileInfo.getParts());
         QueryWriter.writeMessage(socket, response);
+    }
+
+    @Override
+    public Integer getId() {
+        return IdRequestToClient.REQUEST_STAT;
     }
 }

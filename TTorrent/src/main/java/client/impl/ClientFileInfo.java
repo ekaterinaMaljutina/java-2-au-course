@@ -2,20 +2,26 @@ package client.impl;
 
 import client.api.IClientFile;
 import common.Common;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ClientFileInfo implements IClientFile, Serializable {
 
+    private static final Logger LOGGER =
+            LogManager.getLogger(ClientFileInfo.class);
+
     private final int idFile;
     private final long sizeFile;
-    private final Set<Integer> partsInClient;
+    private final Set<Integer> partsInClient = new HashSet<>();
 
     public ClientFileInfo(int idFile, long sizeFile, Set<Integer> parts) {
         this.idFile = idFile;
         this.sizeFile = sizeFile;
-        partsInClient = parts;
+        parts.forEach(this::addPartOfFile);
     }
 
     @Override
@@ -35,9 +41,11 @@ public class ClientFileInfo implements IClientFile, Serializable {
 
     @Override
     public boolean addPartOfFile(int idPart) {
-        return !(partsInClient.contains(idPart)
-                || idPart * Common.PATH_OF_FILE_SIZE >= sizeFile)
-                && partsInClient.add(idPart);
+        if (idPart * Common.PATH_OF_FILE_SIZE < sizeFile) {
+//            LOGGER.debug("add part of file idPart" + idPart);
+            return partsInClient.add(idPart);
+        }
+        return false;
     }
 
     @Override

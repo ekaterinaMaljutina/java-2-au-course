@@ -9,6 +9,27 @@ repositories {
     mavenCentral()
 }
 
+task client(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    if(project.hasProperty('myargs')){
+        args(myargs.split("\\s+"))
+    }
+
+    standardInput = System.in
+
+    main = 'client.MainClient'
+}
+
+task server(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'client.MainClient'
+
+    // arguments to pass to the application
+//    args
+}
+
 dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains/annotations
     compile group: 'org.jetbrains', name: 'annotations', version: '13.0'

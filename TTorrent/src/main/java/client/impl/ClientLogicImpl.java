@@ -36,7 +36,7 @@ public class ClientLogicImpl implements IClientLogic {
     private final int portClient;
     private final IState stateClient;
     private final ExecutorService executorService =
-            Executors.newScheduledThreadPool(COUNT_WORKERS);
+            Executors.newFixedThreadPool(COUNT_WORKERS);
     private ServerSocket serverSocket;
 
     public ClientLogicImpl(int portClient, IState stateClient) {
@@ -51,13 +51,16 @@ public class ClientLogicImpl implements IClientLogic {
 
     @Override
     public void start() {
+        LOGGER.debug(" start client query listener");
         try (ServerSocket serverSocketCurrent = new ServerSocket(portClient)) {
             serverSocket = serverSocketCurrent;
             while (!serverSocketCurrent.isClosed()) {
                 Socket socket = serverSocketCurrent.accept();
+                LOGGER.debug(" accept client ");
                 execute(socket);
             }
         } catch (IOException e) {
+            LOGGER.fatal(" not load client query listener");
             if (serverSocket == null || !serverSocket.isClosed()) {
                 LOGGER.fatal("get er.", e);
             }
@@ -67,19 +70,24 @@ public class ClientLogicImpl implements IClientLogic {
     private void execute(@NotNull Socket socket) {
         executorService.execute(() -> {
             try {
-                Request request = QueryReader.readQuery(socket);
-                if (!idToRequest.containsKey(request.getId())) {
-                    LOGGER.warn("Unknown request with id" + request.getId());
-                } else {
-                    LOGGER.info("Run command with id " + request.getId());
-                    idToRequest.get(request.getId()).run(socket, stateClient);
-                    LOGGER.info("Done command with id = " + request.getId());
-                }
+                runCommand(socket);
             } catch (IOException | ClassNotFoundException e) {
-                if (!serverSocket.isClosed()) {
-                    LOGGER.error("get error on command ", e);
-                }
+                LOGGER.error("get error on command ", e);
+
             }
         });
+    }
+
+    private void runCommand(@NotNull Socket socket) throws IOException, ClassNotFoundException {
+        LOGGER.debug(" get client command wait query ");
+        Request request = QueryReader.readQuery(socket);
+        LOGGER.debug(" get command " + request.getId());
+        if (!idToRequest.containsKey(request.getId())) {
+            LOGGER.warn("Unknown request with id" + request.getId());
+        } else {
+            LOGGER.info("Run command with id " + request.getId());
+            idToRequest.get(request.getId()).run(socket, stateClient, request);
+            LOGGER.info("Done command with id = " + request.getId());
+        }
     }
 }

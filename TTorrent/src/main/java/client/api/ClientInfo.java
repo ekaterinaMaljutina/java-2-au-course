@@ -1,6 +1,8 @@
 package client.api;
 
-public interface ClientInfo {
+import java.io.Serializable;
+
+public interface ClientInfo extends Serializable {
 
     byte[] getIpAddress();
 

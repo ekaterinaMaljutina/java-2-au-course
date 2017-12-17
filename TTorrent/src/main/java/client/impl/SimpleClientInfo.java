@@ -2,9 +2,10 @@ package client.impl;
 
 import client.api.ClientInfo;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class SimpleClientInfo implements ClientInfo {
+public class SimpleClientInfo implements ClientInfo, Serializable {
     private final byte[] ipAddress;
     private final int port;
 
@@ -44,5 +45,13 @@ public class SimpleClientInfo implements ClientInfo {
         int result = Arrays.hashCode(getIpAddress());
         result = 31 * result + getPort();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleClientInfo{" +
+                "ipAddress=" + Arrays.toString(ipAddress) +
+                ", port=" + port +
+                '}';
     }
 }
