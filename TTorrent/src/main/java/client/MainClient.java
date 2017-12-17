@@ -57,7 +57,7 @@ public class MainClient {
 
 
             MainLoopClient loopClient = new MainLoopClient(state,
-                    address, DEFAULT_SERVER_PORT);
+                    address, DEFAULT_SERVER_PORT, downloader);
             loopClient.addExitCommand(downloader);
             loopClient.addExitCommand(updateInfoTaskFromServer);
             new Thread(loopClient).start();

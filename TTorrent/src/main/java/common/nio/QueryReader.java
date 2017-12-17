@@ -13,20 +13,18 @@ public class QueryReader {
     @SuppressWarnings("unchecked")
     public static <T> T readQuery(@NotNull Socket socket)
             throws IOException, ClassNotFoundException {
-        try (
-                ObjectInputStream inputStream = new ObjectInputStream(socket
-                        .getInputStream())) {
-            return (T) inputStream.readObject();
-        }
+        ObjectInputStream inputStream =
+                new ObjectInputStream(socket.getInputStream());
+        return (T) inputStream.readObject();
+
     }
 
 
     public static void readContext(@NotNull Socket socket, Path pathToFile, int idPart)
             throws IOException {
-
-        try (RandomAccessFile file = new RandomAccessFile(pathToFile.toFile(), "rw");
+        try (RandomAccessFile out = new RandomAccessFile(pathToFile.toFile(), "rw");
              InputStream inputStream = socket.getInputStream()) {
-            file.seek(Common.PATH_OF_FILE_SIZE * idPart);
+            out.seek(Common.PATH_OF_FILE_SIZE * idPart);
             IOUtils.copyLarge(inputStream, new OutputStream() {
                 @Override
                 public void write(int b) throws IOException {
@@ -35,7 +33,7 @@ public class QueryReader {
 
                 @Override
                 public void write(@NotNull byte[] b, int off, int len) throws IOException {
-                    file.write(b, off, len);
+                    out.write(b, off, len);
                 }
             });
         }

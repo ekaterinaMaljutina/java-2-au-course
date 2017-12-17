@@ -58,17 +58,14 @@ public class MainLoopServer implements IServerLogic {
 
 
     private void receiveClient(@NotNull Socket socketClient) {
-        try
-                (Socket client = socketClient)
-//             InputStream is = client.getInputStream()) {
-        {
-            final Request request = QueryReader.readQuery(client);
+        try {
+            final Request request = QueryReader.readQuery(socketClient);
             LOGGER.info("get commnad id = " + request.getId());
             IServerCommand currentCommand = findCommand(request.getId());
             if (currentCommand == null) {
                 return;
             }
-            currentCommand.run(client, stateServer, request);
+            currentCommand.run(socketClient, stateServer, request);
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.error("error: ", e);
         }

@@ -24,7 +24,7 @@ public class SourcesResponse implements Serializable {
                 '}';
     }
 
-    public static class ClientSource implements ClientInfo{
+    public static class ClientSource implements ClientInfo {
         private final byte[] api;
         private final int port;
 

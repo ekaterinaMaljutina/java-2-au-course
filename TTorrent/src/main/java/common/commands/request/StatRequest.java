@@ -4,7 +4,7 @@ import common.commands.handlers.client.IdRequestToClient;
 
 import java.io.Serializable;
 
-public class StatRequest implements Request,Serializable {
+public class StatRequest implements Request, Serializable {
     private final int idFile;
 
     public StatRequest(int idFile) {

@@ -12,6 +12,7 @@ public class SimpleClientInfo implements ClientInfo {
         ipAddress = new byte[]{b1, b2, b3, b4};
         this.port = port;
     }
+
     public SimpleClientInfo(byte[] ip, int port) {
         assert ip.length == 4; // ipv4
         ipAddress = ip;

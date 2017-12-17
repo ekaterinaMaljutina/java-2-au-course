@@ -10,8 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,8 +17,8 @@ public class StateClient implements IState, Serializable {
 
     private static final Logger LOGGER = LogManager.getLogger(StateClient.class);
 
-    private final Map<Integer, Path> idxFileToPath;
-    private final Map<Path, IClientFile> pathToFileInfo;
+    private final Map<Integer, String> idxFileToPath;
+    private final Map<String, IClientFile> pathToFileInfo;
     private List<ClientListener> clientListeners = new LinkedList<>();
 
 
@@ -29,22 +27,22 @@ public class StateClient implements IState, Serializable {
         pathToFileInfo = new ConcurrentHashMap<>();
 
         pathNameToFileInfo.forEach((pathToFile, fileInfo) -> {
-            Path path = Paths.get(pathToFile);
-            pathToFileInfo.put(path, fileInfo);
-            idxFileToPath.put(fileInfo.getId(), path);
+//            Path path = Paths.get(pathToFile);
+            pathToFileInfo.put(pathToFile, fileInfo);
+            idxFileToPath.put(fileInfo.getId(), pathToFile);
         });
 
     }
 
     @Override
-    public void partOfFile(@NotNull Path file, int numberOfPart) {
+    public void partOfFile(@NotNull String file, int numberOfPart) {
         if (pathToFileInfo.get(file).addPartOfFile(numberOfPart)) {
             update();
         }
     }
 
     @Override
-    public boolean newFile(@NotNull Path file, IClientFile fileInfo) {
+    public boolean newFile(@NotNull String file, IClientFile fileInfo) {
         if (pathToFileInfo.containsKey(file) ||
                 idxFileToPath.containsKey(fileInfo.getId())) {
             LOGGER.debug(" contains file " + file);
@@ -59,13 +57,13 @@ public class StateClient implements IState, Serializable {
 
     @NotNull
     @Override
-    public Set<Path> getAllFiles() {
+    public Set<String> getAllFiles() {
         return Collections.unmodifiableSet(pathToFileInfo.keySet());
     }
 
     @NotNull
     @Override
-    public Map<Path, IClientFile> getAllFilesWithInfo() {
+    public Map<String, IClientFile> getAllFilesWithInfo() {
         return Collections.unmodifiableMap(pathToFileInfo);
     }
 
@@ -77,7 +75,7 @@ public class StateClient implements IState, Serializable {
 
     @Nullable
     @Override
-    public Path getPathByFileId(int idFile) {
+    public String getPathByFileId(int idFile) {
         return idxFileToPath.get(idFile);
     }
 
@@ -96,14 +94,13 @@ public class StateClient implements IState, Serializable {
     }
 
     private void update() {
-        clientListeners
-                .forEach(clientListener -> {
-                    try {
-                        clientListener.changeState(this);
-                    } catch (IOException e) {
-                        LOGGER.error(" update state listener ERROR:" + e);
-                        e.printStackTrace();
-                    }
-                });
+        clientListeners.forEach(clientListener -> {
+            try {
+                clientListener.changeState(this);
+            } catch (IOException e) {
+                LOGGER.error(" update state listener ERROR:" + e);
+                e.printStackTrace();
+            }
+        });
     }
 }

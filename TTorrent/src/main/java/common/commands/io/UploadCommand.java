@@ -1,6 +1,8 @@
 package common.commands.io;
 
+import client.Downloader;
 import client.api.IState;
+import client.impl.ClientFileInfo;
 import common.files.FileInfoImpl;
 import common.files.IFileInfo;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +12,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class UploadCommand implements ICommand {
 
@@ -20,13 +25,14 @@ public class UploadCommand implements ICommand {
     }
 
     private static @Nullable
-    IFileInfo getFileInfo(@NotNull Path pathToFile, @NotNull IState currentState) {
-        if (currentState.getAllFilesWithInfo().containsKey(pathToFile) || !pathToFile.toFile().exists()) {
+    IFileInfo getFileInfo(@NotNull String pathToFile, @NotNull IState currentState) {
+        Path path = Paths.get(pathToFile);
+        if (currentState.getAllFilesWithInfo().containsKey(pathToFile) || !path.toFile().exists()) {
             LOGGER.error(String.format("file_name = %s : file already exist or file not found", pathToFile.toString()));
             return null;
         }
 
-        return new FileInfoImpl(pathToFile.toFile().getName(), pathToFile.toFile().length());
+        return new FileInfoImpl(path.toFile().getName(), path.toFile().length());
     }
 
     @Override
@@ -37,8 +43,8 @@ public class UploadCommand implements ICommand {
             LOGGER.error(" upload without args : <2> file_name");
             return false;
         }
-
-        IFileInfo fileInfo = getFileInfo(Paths.get(args[1]), state);
+        String path = args[1];
+        IFileInfo fileInfo = getFileInfo(path, state);
         if (fileInfo == null) {
             return false;
         }
@@ -48,9 +54,12 @@ public class UploadCommand implements ICommand {
             LOGGER.debug(String.format(
                     " upload file : %s -> id_file : %d",
                     fileInfo.getName(), idxFile));
-
-            // state add new file !!!!!
-
+            final Set<Integer> parts = IntStream
+                    .iterate(0, i -> i + 1)
+                    .limit(Downloader.partCount(fileInfo.getSize()))
+                    .boxed().collect(Collectors.toSet());
+            state.newFile(path,
+                    new ClientFileInfo(idxFile, fileInfo.getSize(), parts));
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.error(String.format(" not upload file %s; error %s",
                     args[1], e));

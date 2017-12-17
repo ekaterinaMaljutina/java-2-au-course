@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.InetAddress;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,10 @@ public class Downloader implements ExitCommandListener {
         this.executorService = Executors.newScheduledThreadPool(COUNT_THREAD);
     }
 
+    public static int partCount(long size) {
+        return (int) Math.ceil((double) size / Common.PATH_OF_FILE_SIZE);
+    }
+
     public void startDownload(int idFile) {
         executorService.execute(new ResolverFile(idFile));
     }
@@ -59,7 +64,6 @@ public class Downloader implements ExitCommandListener {
         LOGGER.debug(" shutdown Downloader ");
         executorService.shutdown();
     }
-
 
     private class ResolverFile implements Runnable {
 
@@ -76,7 +80,7 @@ public class Downloader implements ExitCommandListener {
                 return;
             }
 
-            final Path localPath = stateClient.getPathByFileId(idFile);
+            final String localPath = stateClient.getPathByFileId(idFile);
             final IClientFile localInfo = stateClient.getFileInfoById
                     (idFile);
             if (localPath != null && localInfo != null) {
@@ -103,7 +107,7 @@ public class Downloader implements ExitCommandListener {
                     return;
                 }
 
-                stateClient.newFile(pathToSave, new ClientFileInfo(idFile,
+                stateClient.newFile(pathToSave.toString(), new ClientFileInfo(idFile,
                         info.getSize(), Collections.emptySet()));
                 run();
             } catch (IOException | ClassNotFoundException e) {
@@ -178,9 +182,6 @@ public class Downloader implements ExitCommandListener {
             return false;
         }
 
-        public int partCount(long size) {
-            return (int) Math.ceil((double) size / Common.PATH_OF_FILE_SIZE);
-        }
     }
 
     private class DownloaderFile implements Runnable {
@@ -198,16 +199,16 @@ public class Downloader implements ExitCommandListener {
             Integer idPartForDownload = partsForDownload == null ? null :
                     partsForDownload.poll();
 
-            Path filePath = stateClient.getPathByFileId(idFile);
-
-            if (idPartForDownload == null || checkExistFile(filePath)) {
+            String filePath = stateClient.getPathByFileId(idFile);
+            Path path = Paths.get(filePath);
+            if (idPartForDownload == null || checkExistFile(path)) {
                 LOGGER.debug(" file id = " + idFile + " loaded or not exist");
                 idFileToDownloadPart.remove(idFile);
                 return;
             }
 
             try {
-                if (!loadPartFile(idFile, idPartForDownload, filePath)) {
+                if (!loadPartFile(idFile, idPartForDownload, path)) {
                     LOGGER.warn(" Not part on other client ");
                     partsForDownload.add(idPartForDownload);
                     executorService.schedule(this, 10, TimeUnit.SECONDS);
@@ -238,8 +239,7 @@ public class Downloader implements ExitCommandListener {
                                 clientInfo.getPort());
                 Set<Integer> parts = clientRequest.stat(idFile);
                 if (parts.contains(idPartForDownload)) {
-                    if (clientRequest.get(idFile, idPartForDownload,
-                            filePath)) {
+                    if (clientRequest.get(idFile, idPartForDownload, filePath)) {
                         flagSuccess = true;
                         LOGGER.debug(String.format("Load part %d for " +
                                 "file %d ", idPartForDownload, idFile));
@@ -248,7 +248,7 @@ public class Downloader implements ExitCommandListener {
                         if (file != null && file.getParts().isEmpty()) {
                             updateInfoTaskFromServer.runAsych();
                         }
-                        stateClient.partOfFile(filePath, idPartForDownload);
+                        stateClient.partOfFile(filePath.toString(), idPartForDownload);
 
                         IClientFile fileInfo = stateClient.getFileInfoById
                                 (idFile);

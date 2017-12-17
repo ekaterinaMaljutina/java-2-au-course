@@ -1,11 +1,10 @@
 package common.commands.handlers.server;
 
-import client.impl.SimpleClientInfo;
 import client.api.ClientInfo;
+import client.impl.SimpleClientInfo;
 import common.commands.request.Request;
 import common.commands.request.UpdateRequest;
 import common.commands.response.UpdateResponse;
-import common.nio.QueryReader;
 import common.nio.QueryWriter;
 import org.jetbrains.annotations.NotNull;
 import server.api.IStateServer;

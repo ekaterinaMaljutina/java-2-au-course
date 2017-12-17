@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 import java.util.Map;
 
-public interface ISharedFiles {
+public interface ISharedFiles extends Serializable {
 
     Map<Integer, IFileInfo> getFiles();
 

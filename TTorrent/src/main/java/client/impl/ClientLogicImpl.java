@@ -27,17 +27,17 @@ public class ClientLogicImpl implements IClientLogic {
     private static final Map<Integer, ClientCommand> idToRequest;
     private static final int COUNT_WORKERS = 4;
 
-    private final int portClient;
-    private final IState stateClient;
-
-    private ServerSocket serverSocket;
-    private final ExecutorService executorService = Executors.newScheduledThreadPool(COUNT_WORKERS);
-
     static {
         idToRequest = new ConcurrentHashMap<>();
         idToRequest.put(IdRequestToClient.REQUEST_STAT, new StatCommand());
         idToRequest.put(IdRequestToClient.REQUEST_GET, new GetCommand());
     }
+
+    private final int portClient;
+    private final IState stateClient;
+    private final ExecutorService executorService =
+            Executors.newScheduledThreadPool(COUNT_WORKERS);
+    private ServerSocket serverSocket;
 
     public ClientLogicImpl(int portClient, IState stateClient) {
         this.portClient = portClient;
@@ -58,8 +58,8 @@ public class ClientLogicImpl implements IClientLogic {
                 execute(socket);
             }
         } catch (IOException e) {
-            if (!serverSocket.isClosed()) {
-                LOGGER.fatal("get error.", e);
+            if (serverSocket == null || !serverSocket.isClosed()) {
+                LOGGER.fatal("get er.", e);
             }
         }
     }

@@ -23,7 +23,7 @@ public class ListResponse implements Serializable {
                 '}';
     }
 
-    public static class ItemFile {
+    public static class ItemFile implements Serializable {
         private int id;
         private String name;
         private long size;

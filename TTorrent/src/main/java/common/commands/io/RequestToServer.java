@@ -41,11 +41,11 @@ public class RequestToServer implements IRequestToServer {
     @Override
     public Map<Integer, IFileInfo> getListFiles() throws IOException, ClassNotFoundException {
         LOGGER.info("send to list request");
-        try (Socket socket =
-                     new Socket(addressServer, portServer)) {
+        try (Socket socket = new Socket(addressServer, portServer)) {
             ListRequest request = new ListRequest();
             QueryWriter.writeMessage(socket, request);
             ListResponse response = QueryReader.readQuery(socket);
+            LOGGER.info("get response list");
             Map<Integer, IFileInfo> result = new HashMap<>();
             response.getListFiles().forEach(itemFile -> {
                 result.put(itemFile.getId(),
@@ -58,11 +58,11 @@ public class RequestToServer implements IRequestToServer {
 
     @Override
     public int upload(@NotNull IFileInfo fileInfo) throws IOException, ClassNotFoundException {
-        try (Socket socket =
-                     new Socket(addressServer, portServer)) {
+        try (Socket socket = new Socket(addressServer, portServer)) {
             LOGGER.info("send to upload request");
             UploadRequest request = new UploadRequest(fileInfo.getName(), fileInfo.getSize());
             QueryWriter.writeMessage(socket, request);
+            LOGGER.info("get upload response");
             UploadResponse response = QueryReader.readQuery(socket);
             return response.getIdFile();
         }
@@ -70,20 +70,19 @@ public class RequestToServer implements IRequestToServer {
 
     @Override
     public List<ClientInfo> sources(int idFile) throws IOException, ClassNotFoundException {
-        try (Socket socket =
-                     new Socket(addressServer, portServer)) {
+        try (Socket socket = new Socket(addressServer, portServer)) {
             LOGGER.info("send to sources request");
             SourcesRequest request = new SourcesRequest(idFile);
             QueryWriter.writeMessage(socket, request);
             SourcesResponse response = QueryReader.readQuery(socket);
+            LOGGER.info("get sources response");
             return response.getClientSourceList();
         }
     }
 
     @Override
     public boolean update(int port, Set<Integer> idFiles) throws IOException, ClassNotFoundException {
-        try (Socket socket =
-                     new Socket(addressServer, portServer)) {
+        try (Socket socket = new Socket(addressServer, portServer)) {
             LOGGER.info("send to update request");
             UpdateRequest request = new UpdateRequest(port, idFiles);
             QueryWriter.writeMessage(socket, request);

@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.file.Path;
 
 public class GetCommand implements ClientCommand {
     @Override
@@ -19,7 +18,7 @@ public class GetCommand implements ClientCommand {
         GetRequest request = QueryReader.readQuery(socket);
         LOGGER.info(String.format("get command %s ", request));
 
-        Path pathToFile = stateClient.getPathByFileId(request.getIdFile());
+        String pathToFile = stateClient.getPathByFileId(request.getIdFile());
         IClientFile fileInfo = stateClient.getFileInfoById(request.getIdFile());
         if (pathToFile == null || fileInfo == null) {
             LOGGER.warn(String.format(" file by id=%d not found", request.getIdFile()));

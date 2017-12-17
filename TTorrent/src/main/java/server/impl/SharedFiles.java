@@ -7,15 +7,15 @@ import server.api.ChangeFileList;
 import server.api.ISharedFiles;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SharedFiles implements ISharedFiles, Serializable {
 
     private final Map<Integer, IFileInfo> idToFileInfo;
-    private final List<ChangeFileList> changeFileLists = new LinkedList<>();
+    private final List<ChangeFileList> changeFileLists = new CopyOnWriteArrayList<>();
 
     public SharedFiles(Map<Integer, IFileInfo> idToFileInfo) {
         this.idToFileInfo = new ConcurrentHashMap<>(idToFileInfo);
@@ -55,8 +55,7 @@ public class SharedFiles implements ISharedFiles, Serializable {
     }
 
     private void changeListFiles() {
-        changeFileLists
-                .forEach(changeFileList -> changeFileList
-                        .changeStateSharedFiles(this));
+        changeFileLists.forEach(changeFileList -> changeFileList
+                .changeStateSharedFiles(this));
     }
 }
